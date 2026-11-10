@@ -28,11 +28,9 @@
     --font-title: "Instrument Serif", Georgia, "Times New Roman", serif;
     --font-sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-    --radius-control: 4px;
-    --radius-panel: 8px;
+    --radius-control: 8px;
+    --radius-surface: 16px;
 
-    --text-title: 32px;
-    --text-title--line-height: 38px;
     --text-heading: 18px;
     --text-heading--line-height: 26px;
     --text-subheading: 15px;
@@ -115,10 +113,12 @@
     .prose-c a { color: var(--color-brass); text-decoration: underline; }
 
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 14px;
-        border-radius: 8px; font-size: 14px; font-weight: 500; border: 1px solid var(--color-bar); color: var(--color-ink);
+        border-radius: var(--radius-control); font-size: 14px; font-weight: 500; border: 1px solid var(--color-bar); color: var(--color-ink);
         background: transparent; cursor: pointer; white-space: nowrap;
         transition: background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out, transform 80ms ease-out; }
-    .btn:active:not([disabled]) { transform: scale(0.98); }
+    /* Buttons step up on hover and press down on click, so every control answers the pointer. */
+    .btn:hover:not([disabled]) { transform: translateY(-1px); }
+    .btn:active:not([disabled]) { transform: translateY(0) scale(0.98); }
     @media (pointer: coarse) { .btn { min-height: 44px; } }
     .btn:hover { background: var(--color-hover); }
     .btn-primary { background: var(--color-brass); border-color: var(--color-brass); color: var(--color-on-brass); }
@@ -129,7 +129,7 @@
     @media (pointer: coarse) { .btn-sm { min-height: 44px; } }
     .btn[disabled] { opacity: .5; cursor: not-allowed; }
 
-    .input { width: 100%; min-height: 40px; padding: 8px 12px; border-radius: 8px; background: var(--color-surface);
+    .input { width: 100%; min-height: 40px; padding: 8px 12px; border-radius: var(--radius-control); background: var(--color-surface);
         border: 1px solid var(--color-bar); color: var(--color-ink); font-size: 15px; transition: border-color 120ms ease-out; }
     .input:hover { border-color: var(--color-line-strong); }
     .input:focus { border-color: var(--color-line-strong); background: var(--color-surface); }
@@ -158,15 +158,16 @@
     .rows > * { border-bottom: 1px solid var(--color-line); }
     .rows > *:first-child { border-top: 1px solid var(--color-line); }
 
-    .panel { background: var(--color-surface); border: 0; border-radius: 12px; box-shadow: var(--shadow-group); }
+    .panel { background: var(--color-surface); border: 0; border-radius: var(--radius-surface); box-shadow: var(--shadow-group); }
     .float { box-shadow: var(--shadow-float); }
     .badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 6px; border-radius: 4px; font-size: 12px; line-height: 16px; border: 1px solid var(--color-line); color: var(--color-ink-secondary); }
-    .banner { padding: 14px 18px; border-radius: 12px; border: 1px solid var(--color-line); }
+    .banner { padding: 14px 18px; border-radius: var(--radius-surface); border: 1px solid var(--color-line); }
     .banner-off { background: var(--color-off-track-subtle); border-color: transparent; }
     .banner-brass { background: var(--color-brass-subtle); border-color: transparent; }
     .tab { padding: 10px 2px; margin-right: 24px; margin-bottom: -1px; font-size: 14px; font-weight: 500; color: var(--color-ink-secondary); border-bottom: 2px solid transparent; display: inline-block; }
     .tab[aria-current="page"], .tab[aria-selected="true"] { color: var(--color-brass); border-bottom-color: var(--color-brass); }
-    .link { color: var(--color-brass); text-decoration: underline; text-underline-offset: 2px; }
+    .link { color: var(--color-brass); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); transition: text-decoration-color 120ms ease-out; }
+    .link:hover { text-decoration-color: currentColor; }
     .skeleton { background: var(--color-hover); border-radius: 4px; height: 14px; }
 
     .wordmark { font-family: var(--font-title); font-size: 24px; line-height: 28px; letter-spacing: -0.01em; color: var(--color-ink); }
@@ -175,6 +176,7 @@
     .nav-scroll { mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent); padding-bottom: 24px; }
     .menu-item { display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 10px; font-size: 14px; border-radius: 4px; }
     .menu-item:hover { background: var(--color-hover); }
+    @media (pointer: coarse) { .menu-item { min-height: 44px; } }
     .h-13 { height: 52px; }
     .section-title { font-size: 15px; line-height: 22px; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--color-line); margin-bottom: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
     .section-title .count { font-weight: 400; color: var(--color-ink-muted); font-size: 13px; }
@@ -197,9 +199,9 @@
     .cell-missing { outline: 1px dashed var(--color-off-track); outline-offset: -4px; }
     .cell-input { width: 100%; min-width: 0; background: transparent; text-align: right; padding: 0; border: 0; font: inherit; }
 
-    .dialog { margin: auto; background: var(--color-surface); color: var(--color-ink); border-radius: 8px; box-shadow: var(--shadow-float); max-width: 520px; width: calc(100% - 32px); padding: 24px; border: 0; }
+    .dialog { margin: auto; background: var(--color-surface); color: var(--color-ink); border-radius: var(--radius-surface); box-shadow: var(--shadow-float); max-width: 520px; width: calc(100% - 32px); padding: 24px; border: 0; }
     .dialog::backdrop { background: rgb(29 32 39 / 0.35); }
-    .sidepanel { position: fixed; top: 0; right: 0; bottom: 0; width: 440px; max-width: 100%; background: var(--color-surface); box-shadow: var(--shadow-float); border-radius: 8px 0 0 8px; overflow-y: auto; z-index: 40; padding: 24px; }
+    .sidepanel { position: fixed; top: 0; right: 0; bottom: 0; width: 440px; max-width: 100%; background: var(--color-surface); box-shadow: var(--shadow-float); border-radius: var(--radius-surface) 0 0 var(--radius-surface); overflow-y: auto; z-index: 40; padding: 24px; }
     @media (max-width: 767px) { .sidepanel { width: 100%; border-radius: 0; } }
     .fade-in { animation: fade-in 150ms ease-out; }
     details[open]:not(.nav-group) > :not(summary) { animation: fade-in-sm 120ms ease-out; }
@@ -210,7 +212,7 @@
     .facts > dt { color: var(--color-ink-secondary); padding-right: 16px; }
     .facts > dd { text-align: right; }
     @keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-    .toast { position: fixed; left: 16px; bottom: 80px; background: var(--color-ink); color: var(--color-paper); border-radius: 4px; padding: 10px 14px; font-size: 14px; z-index: 50; }
+    .toast { position: fixed; left: 16px; bottom: 80px; background: var(--color-ink); color: var(--color-paper); border-radius: var(--radius-control); padding: 10px 14px; font-size: 14px; z-index: 50; }
     @media (min-width: 768px) { .toast { bottom: 16px; } }
 }
 
@@ -258,14 +260,11 @@
 
 @layer components {
     /* Grouped surfaces: lists and tables sit on one raised group; rows are separated by inset hairlines. */
-    .rows { background: var(--color-surface); border-radius: 12px; box-shadow: var(--shadow-group); }
     .rows > * { padding-left: 16px; padding-right: 16px; border-bottom: 1px solid var(--color-line); }
     .rows > *:first-child { border-top: 0; }
     .rows > *:last-child { border-bottom: 0; }
     .rows > a:hover, .rows > *:hover { background: var(--color-hover); }
-    .rows > *:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
-    .rows > *:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
-    div:has(> .tbl) { background: var(--color-surface); border-radius: 12px; box-shadow: var(--shadow-group); }
+    .rows, div:has(> .tbl) { background: var(--color-surface); box-shadow: var(--shadow-group); }
     .tbl th { background: var(--color-surface); padding-top: 10px; padding-bottom: 10px; }
     .tbl th:first-child, .tbl td:first-child { padding-left: 16px; }
     .tbl th:last-child, .tbl td:last-child { padding-right: 16px; }
@@ -303,7 +302,7 @@
     @media (pointer: coarse) { .nav-item, .nav-top { min-height: 44px; } }
 
     /* Content sits in cards on a page one step deeper. */
-    .card { background: var(--color-surface); border-radius: 16px; box-shadow: var(--shadow-group); overflow: hidden; }
+    .card { background: var(--color-surface); border-radius: var(--radius-surface); box-shadow: var(--shadow-group); overflow: hidden; }
     .card > h2:first-child { margin: 0; padding: 14px 20px; font-size: 15px; line-height: 22px; font-weight: 600; letter-spacing: 0; border-bottom: 1px solid var(--color-line); }
     .card > h3 { margin: 0; padding: 14px 20px 6px; }
     .card > :not(h2):not(h3):not(.rows):not(.flush) { margin-left: 20px; margin-right: 20px; }
@@ -313,15 +312,15 @@
     .card > h3 + .rows { margin-top: 0; border-top: 1px solid var(--color-line); }
     .card > h3 { font-size: 13px; line-height: 18px; font-weight: 500; color: var(--color-ink-secondary); }
     .card > .rows + h3 { border-top: 1px solid var(--color-line); padding-top: 16px; }
-    .box { background: var(--color-surface); border-radius: 16px; box-shadow: var(--shadow-group); padding: 20px; }
+    .box { background: var(--color-surface); border-radius: var(--radius-surface); box-shadow: var(--shadow-group); padding: 20px; }
     @media (min-width: 768px) { .box { padding: 24px; } }
     .box .rows, .box div:has(> .tbl) { background: transparent; box-shadow: none; border-radius: 0; }
     .box .rows > * { padding-left: 0; padding-right: 0; border-radius: 0; }
     .box .rows > *:first-child { border-top: 1px solid var(--color-line); border-radius: 0; }
     .box .rows > *:last-child { border-bottom: 1px solid var(--color-line); border-radius: 0; }
-    .rows, div:has(> .tbl), .panel { border-radius: 16px; }
-    .rows > *:first-child { border-top-left-radius: 16px; border-top-right-radius: 16px; }
-    .rows > *:last-child { border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; }
+    .rows, div:has(> .tbl) { border-radius: var(--radius-surface); }
+    .rows > *:first-child { border-top-left-radius: var(--radius-surface); border-top-right-radius: var(--radius-surface); }
+    .rows > *:last-child { border-bottom-left-radius: var(--radius-surface); border-bottom-right-radius: var(--radius-surface); }
 
     .input:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brass) 16%, transparent); }
     .dialog[open] { animation: dialog-in 150ms ease-out; }

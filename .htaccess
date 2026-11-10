@@ -1,0 +1,11 @@
+# InfinityFree serves htdocs/ as the web root: send everything to public/ and hide the rest.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(\.env|\.git|composer\.(json|lock)|artisan|phpunit\.xml|tailwindcss(\.exe)?)$ - [F,L,NC]
+    RewriteRule ^(storage|vendor|database|tests|app|bootstrap|config|resources|routes)(/.*)?$ - [F,L,NC]
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

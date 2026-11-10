@@ -22,7 +22,7 @@
     $daily = [['Home', 'org.home', 'house'], ['Tasks', 'org.tasks.index', 'list-checks'], ['Calendar', 'org.calendar.index', 'calendar']];
     $measure = ['reading' => 'max-w-[720px]', 'standard' => 'max-w-[1040px]', 'wide' => ''][$wide ? 'wide' : $width];
     $rail = request()->cookie('nav_rail') === '1';
-    $closed = array_intersect(explode(',', (string) request()->cookie('nav_closed')), array_column($nav, 0));
+    $opened = array_intersect(explode(',', (string) request()->cookie('nav_open')), array_column($nav, 0));
     $others = auth()->user()->activeMemberships()->where('organization_id', '!=', $org->id);
 @endphp
 <!doctype html>

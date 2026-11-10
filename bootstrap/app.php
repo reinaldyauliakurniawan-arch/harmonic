@@ -21,7 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [SecurityHeaders::class, AuthenticateSession::class]);
         // Sidebar layout preferences are set by the browser and validated against a whitelist where read.
-        $middleware->encryptCookies(except: ['nav_rail', 'nav_closed']);
+        $middleware->encryptCookies(except: ['nav_rail', 'nav_open']);
         $middleware->alias(['member' => EnsureMember::class, 'scheduler' => LazyScheduler::class, 'super' => SuperAdmin::class]);
         // Tenant must be set before child models bind, so their global scope turns other tenants' ids into 404.
         $middleware->prependToPriorityList(SubstituteBindings::class, EnsureMember::class);

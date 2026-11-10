@@ -6,7 +6,7 @@
     </ul>
     @foreach ($nav as [$group, $items])
         @php $holdsCurrent = collect($items)->contains(fn ($i) => $isActive($i[1])); @endphp
-        <details class="nav-group mt-3" data-nav-group="{{ $group }}" @toggle="group" @if ($rail || $holdsCurrent || ! in_array($group, $closed, true)) open @endif>
+        <details class="nav-group mt-3" data-nav-group="{{ $group }}" @toggle="group" @if ($rail || $holdsCurrent || in_array($group, $opened, true)) open @endif>
             <summary class="nav-group-label">{{ $group }}<x-icon name="chevron-down" :size="14" /></summary>
             <ul class="space-y-0.5 pb-1">
                 @foreach ($items as [$label, $route, $icon])

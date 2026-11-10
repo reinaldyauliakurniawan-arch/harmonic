@@ -327,14 +327,17 @@ test('repeated field names get their own ids so each label points at its input',
         ->and(substr_count($html, 'for="f-current-password-2"'))->toBe(1);
 });
 
-test('the sidebar remembers the rail and closed groups, keeps the current group open, and ignores unknown values', function () {
+test('sidebar groups start closed, remember the ones opened, keep the current group open, and ignore unknown values', function () {
     $t = orgTree();
     $html = actAs($t['admin'])->withUnencryptedCookies(['nav_rail' => '1'])->get(ou('home'))->assertOk()->getContent();
     expect($html)->toContain('nav-rail');
 
-    $html = actAs($t['admin'])->withUnencryptedCookies(['nav_rail' => '0', 'nav_closed' => 'Direction,Team,<script>'])->get(ou('formation.index'))->assertOk()->getContent();
-    expect($html)->toMatch('/data-nav-group="Direction"[^>]*@toggle="group"\s*>/')
+    $html = actAs($t['admin'])->withUnencryptedCookies(['nav_rail' => '0', 'nav_open' => ''])->get(ou('home'))->assertOk()->getContent();
+    expect($html)->not->toMatch('/data-nav-group="[^"]+"[^>]*\sopen\s*>/');
+
+    $html = actAs($t['admin'])->withUnencryptedCookies(['nav_rail' => '0', 'nav_open' => 'Direction,<script>'])->get(ou('formation.index'))->assertOk()->getContent();
+    expect($html)->toMatch('/data-nav-group="Direction"[^>]*\sopen\s*>/')
         ->and($html)->toMatch('/data-nav-group="Team"[^>]*\sopen\s*>/')
-        ->and($html)->toMatch('/data-nav-group="Measurements"[^>]*\sopen\s*>/')
+        ->and($html)->toMatch('/data-nav-group="Measurements"[^>]*@toggle="group"\s*>/')
         ->and($html)->not->toContain('<script>');
 });

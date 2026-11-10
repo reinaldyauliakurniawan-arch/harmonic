@@ -17,23 +17,23 @@ document.addEventListener('alpine:init', () => {
     rail: document.body.classList.contains('nav-rail'),
     get expanded() { return !this.rail; },
     sideGroups() { return Array.from(document.querySelectorAll('aside .nav-group')); },
-    // Collapsed to icons: every group shows its icons; expanding restores the groups the person had closed.
+    // Collapsed to icons: every group shows its icons; expanding restores the groups the person had opened.
     toggleRail() {
       this.rail = !this.rail;
       document.body.classList.add('rail-anim');
       setTimeout(() => document.body.classList.remove('rail-anim'), 200);
       document.body.classList.toggle('nav-rail', this.rail);
       cookie('nav_rail', this.rail ? '1' : '0');
-      const closed = readCookie('nav_closed').split(',');
-      this.sideGroups().forEach((d) => { d.open = this.rail || !closed.includes(d.dataset.navGroup) || !!d.querySelector('[aria-current="page"]'); });
+      const opened = readCookie('nav_open').split(',');
+      this.sideGroups().forEach((d) => { d.open = this.rail || opened.includes(d.dataset.navGroup) || !!d.querySelector('[aria-current="page"]'); });
       document.querySelectorAll('aside .nav-item, aside .nav-top').forEach((a) => { if (this.rail) a.title = a.dataset.label; else a.removeAttribute('title'); });
     },
     group(e) {
       const d = e.target;
       if (this.rail && d.closest('aside')) return;
-      const closed = new Set(readCookie('nav_closed').split(',').filter(Boolean));
-      if (d.open) closed.delete(d.dataset.navGroup); else closed.add(d.dataset.navGroup);
-      cookie('nav_closed', Array.from(closed).join(','));
+      const opened = new Set(readCookie('nav_open').split(',').filter(Boolean));
+      if (d.open) opened.add(d.dataset.navGroup); else opened.delete(d.dataset.navGroup);
+      cookie('nav_open', Array.from(opened).join(','));
     },
     openMenu() { this.menu = true; this.$nextTick(() => this.$refs.menuClose.focus()); },
     closeMenu() { if (!this.menu) return; this.menu = false; this.$refs.menuButton.focus(); },

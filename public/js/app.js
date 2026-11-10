@@ -79,7 +79,14 @@ document.addEventListener('alpine:init', () => {
     },
   }));
 
-  Alpine.data('printPage', () => ({ print() { window.print(); } }));
+  // Password fields: show what was typed, on request.
+  Alpine.data('reveal', () => ({
+    shown: false,
+    get label() { return this.shown ? 'Hide' : 'Show'; },
+    toggle() { this.shown = !this.shown; this.$root.querySelector('input').type = this.shown ? 'text' : 'password'; },
+  }));
+
+  Alpine.data('printPage',() => ({ print() { window.print(); } }));
 
   // Filter rows apply as soon as a value changes; the Apply button stays for no-JS use.
   Alpine.data('autoSubmit', () => ({

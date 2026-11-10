@@ -8,10 +8,10 @@ class AssessmentItem extends Model
 {
     public $timestamps = false;
 
-    protected $fillable = ['text', 'sort_order'];
+    protected $fillable = ['text', 'levels', 'sort_order'];
 
     protected function casts(): array
     {
-        return ['archived_at' => 'datetime'];
+        return ['archived_at' => 'datetime', 'levels' => 'array'];
     }
 }

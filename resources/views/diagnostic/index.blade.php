@@ -1,5 +1,5 @@
 <x-app title="Company Diagnostic">
-    <x-page-header title="Company Diagnostic" description="24 anonymous statements that score the organization's health from 0 to 100 in each section. Results appear after a cycle closes." />
+    <x-page-header title="Company Diagnostic" description="20 anonymous statements, each rated from 1 (weak) to 5 (strong). The total is the organization's score out of 100. Results appear after a cycle closes." />
     <x-errors />
     @if ($open)
         @if (! $answered)
@@ -44,7 +44,7 @@
             @if ($closed->count() > 1)
                 <form method="GET" class="filters my-3" x-data="autoSubmit" @change="submit"><x-filter name="cycle" label="Cycle" :options="$closed->mapWithKeys(fn ($c) => [$c->id => 'Closed '.$c->closed_at->format('j M Y')])->all()" :value="$shown->id" /><button class="btn btn-sm btn-ghost" data-apply>Apply</button></form>
             @endif
-            <p class="text-ink-secondary">{{ $results['responses'] }} {{ $results['responses'] === 1 ? 'response' : 'responses' }}. Overall score <span class="font-medium text-ink">{{ $results['overall'] ?? '–' }}</span>.</p>
+            <p class="text-ink-secondary">{{ $results['responses'] }} {{ $results['responses'] === 1 ? 'response' : 'responses' }}. Overall score <span class="font-medium text-ink">{{ $results['overall'] ?? '–' }}</span> of 100.</p>
             @if ($results['responses'] > 0 && $results['responses'] < 3)<p class="banner banner-off mt-3">Fewer than 3 people answered, so answers may be identifiable.</p>@endif
             <div class="mt-4 space-y-3">
                 @foreach ($cfg['sections'] as $k => $l)

@@ -49,6 +49,7 @@ class Onboarding
             foreach (self::RUBRIC as $score => $label) {
                 RubricLevel::create(['score' => $score, 'label' => $label]);
             }
+            self::seedLeadership($org->id);
             if ($membership) {
                 $this->tenant->membership = $membership;
                 ActivityLog::record('member.joined', $membership, ['founder' => true]);
@@ -58,6 +59,17 @@ class Onboarding
 
             return [$org, $membership, $root];
         });
+    }
+
+    /** Copies the leadership roles and items from config/assessment.php into one organization; also used by a migration, so it writes rows directly. */
+    public static function seedLeadership(int $orgId): void
+    {
+        foreach (config('assessment.leadership') as $t => $type) {
+            $typeId = DB::table('assessment_types')->insertGetId(['organization_id' => $orgId, 'name' => $type['name'], 'sort_order' => $t + 1]);
+            DB::table('assessment_items')->insert(array_map(fn ($item, $i) => [
+                'type_id' => $typeId, 'text' => $item[0], 'levels' => json_encode($item[1]), 'sort_order' => $i + 1,
+            ], $type['items'], array_keys($type['items'])));
+        }
     }
 
     /** Creates an invitation and returns the plain token, which is shown once and never stored. */

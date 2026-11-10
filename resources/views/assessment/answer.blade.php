@@ -5,8 +5,15 @@
     <form method="POST" action="{{ route('org.assessment.answer.store', $assessor) }}" class="max-w-3xl space-y-4" novalidate>
         @csrf
         @foreach ($items as $i)
-            <div class="grid gap-2 border-b border-line py-3 sm:grid-cols-[1fr_140px] sm:items-end">
-                <label for="s-{{ $i->id }}">{{ $i->text }}</label>
+            <div class="grid gap-2 border-b border-line py-3 sm:grid-cols-[1fr_140px] sm:items-start">
+                <div>
+                    <label for="s-{{ $i->id }}">{{ $i->text }}</label>
+                    @if ($i->levels)
+                        <ol class="mt-2 space-y-1 text-small text-ink-secondary" aria-label="What each level looks like">
+                            @foreach ($i->levels as $n => $text)<li class="grid grid-cols-[16px_1fr] gap-2"><span class="font-medium text-ink">{{ $n + 1 }}</span><span>{{ $text }}</span></li>@endforeach
+                        </ol>
+                    @endif
+                </div>
                 <div>
                     <input id="s-{{ $i->id }}" name="scores[{{ $i->id }}]" type="number" min="1" max="5" step="0.25" class="input" list="levels" value="{{ old('scores.'.$i->id) }}" @error('scores.'.$i->id) aria-invalid="true" @enderror>
                     @error('scores.'.$i->id)<p class="error">{{ $message }}</p>@enderror

@@ -18,24 +18,26 @@ use Illuminate\Validation\ValidationException;
 /** Company Diagnostic (PRD DG-01 to DG-04). */
 class DiagnosticController extends Controller
 {
-    /** Section score = (average − 1) ÷ 4 × 100, rounded; overall = mean of the six section scores. */
+    /**
+     * Each statement is rated 1–5; a person's score is the sum of their twenty ratings (out of 100).
+     * Overall = the mean of those sums; a section or statement is its points as a share of its maximum.
+     */
     public static function results(DiagnosticCycle $c): array
     {
         $cfg = config('diagnostic');
-        $answers = DB::table('diagnostic_answers')->where('cycle_id', $c->id)->get();
-        $byQ = $answers->groupBy('question_key')->map(fn ($g) => $g->avg('score'));
+        // Answers to statements no longer in the set are left out so old cycles still render.
+        $byQ = DB::table('diagnostic_answers')->where('cycle_id', $c->id)->whereIn('question_key', array_keys($cfg['statements']))
+            ->get()->groupBy('question_key')->map(fn ($g) => $g->avg('score'));
+        $pct = fn ($q) => $q->isEmpty() ? null : (int) round($q->sum() / ($q->count() * 5) * 100);
         $sections = [];
         foreach ($cfg['sections'] as $key => $label) {
-            $keys = array_keys(array_filter($cfg['statements'], fn ($s) => $s[0] === $key));
-            $avg = $answers->whereIn('question_key', $keys)->avg('score');
-            $sections[$key] = $avg === null ? null : (int) round(($avg - 1) / 4 * 100);
+            $sections[$key] = $pct($byQ->filter(fn ($avg, $k) => $cfg['statements'][$k][0] === $key));
         }
-        $vals = array_filter($sections, fn ($v) => $v !== null);
-        $gaps = $byQ->sort()->take(3)->map(fn ($avg, $k) => ['key' => $k, 'text' => $cfg['statements'][$k][1], 'score' => (int) round(($avg - 1) / 4 * 100)])->values();
+        $gaps = $byQ->sort()->take(3)->map(fn ($avg, $k) => ['key' => $k, 'text' => $cfg['statements'][$k][1], 'score' => (int) round($avg / 5 * 100)])->values();
 
         return [
             'responses' => DB::table('diagnostic_completions')->where('cycle_id', $c->id)->count(),
-            'sections' => $sections, 'overall' => $vals ? (int) round(array_sum($vals) / count($vals)) : null, 'gaps' => $gaps,
+            'sections' => $sections, 'overall' => $pct($byQ), 'gaps' => $gaps,
         ];
     }
 

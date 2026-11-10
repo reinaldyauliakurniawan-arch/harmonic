@@ -76,24 +76,25 @@ test('diagnostic: anonymous answers, results hidden until close, score formulas 
 
     $keys = array_keys(config('diagnostic.statements'));
     $all = fn ($v) => ['answers' => array_fill_keys($keys, $v)];
-    actAs($t['rep'])->post(ou('diagnostic.answer', [$c]), ['answers' => ['d1' => 5]])->assertSessionHasErrors('answers.d2');
+    actAs($t['rep'])->post(ou('diagnostic.answer', [$c]), ['answers' => ['q1' => 5]])->assertSessionHasErrors('answers.q2');
     $a = $all(5);
-    $a['answers']['m1'] = 1;
+    $a['answers']['q18'] = 1;
     actAs($t['rep'])->post(ou('diagnostic.answer', [$c]), $a)->assertSessionHasNoErrors();
     actAs($t['rep'])->post(ou('diagnostic.answer', [$c]), $a)->assertSessionHasErrors('answers');
     actAs($t['lead'])->post(ou('diagnostic.answer', [$c]), $all(3));
-    expect(DB::table('diagnostic_answers')->count())->toBe(48);
+    expect(DB::table('diagnostic_answers')->count())->toBe(40);
     actAs($t['rep'])->get(ou('diagnostic.index'))->assertDontSee('Biggest gaps');
 
     $this->travelTo(now()->addDays(15));
     app(Jobs::class)->closeDiagnosticCycles();
     $r = DiagnosticController::results($c->fresh());
-    // Direction: (5+3)/2 = 4 → 75. Measurements: m1 avg 2, others 4 → avg 3.5 → 63 (rounded from 62.5).
-    expect($r['responses'])->toBe(2)->and($r['sections']['direction'])->toBe(75)->and($r['sections']['measurements'])->toBe(63);
-    expect($r['overall'])->toBe((int) round((75 * 5 + 63) / 6))->and($r['gaps'][0]['key'])->toBe('m1')->and($r['gaps'][0]['score'])->toBe(25);
+    // Sums: rep 19×5 + 1 = 96, lead 20×3 = 60 → overall (96+60)/2 = 78 of 100.
+    // Direction: six statements averaging 4 → 24 of 30 = 80. Measurements: 4+2+4+4 = 14 of 20 = 70. q18 averages 2 → 40.
+    expect($r['responses'])->toBe(2)->and($r['sections']['direction'])->toBe(80)->and($r['sections']['measurements'])->toBe(70);
+    expect($r['overall'])->toBe(78)->and($r['gaps'][0]['key'])->toBe('q18')->and($r['gaps'][0]['score'])->toBe(40);
     actAs($t['rep'])->get(ou('diagnostic.index'))->assertSee('Biggest gaps')->assertSee('Fewer than 3 people answered');
 
-    actAs($t['rep'])->post(ou('diagnostic.problem', [$c]), ['key' => 'm1'])->assertForbidden();
+    actAs($t['rep'])->post(ou('diagnostic.problem', [$c]), ['key' => 'q18'])->assertForbidden();
     actAs($t['admin'])->post(ou('diagnostic.problem', [$c]), ['key' => 'measurements'])->assertRedirect();
     expect(Problem::where('source_type', 'diagnostic')->where('horizon', 'long')->exists())->toBeTrue();
 });
@@ -173,7 +174,24 @@ test('360 types and items can be reordered by leadership', function () {
     actAs($t['rep'])->postJson(ou('assessment.order'), ['kind' => 'types', 'ids' => [$b->id, $a->id]])->assertForbidden();
     actAs($t['admin'])->postJson(ou('assessment.order'), ['kind' => 'types', 'ids' => [$b->id, $a->id]])->assertOk();
     actAs($t['admin'])->postJson(ou('assessment.order'), ['kind' => 'items', 'type' => $a->id, 'ids' => [$i2->id, $i1->id]])->assertOk();
-    expect(AssessmentType::orderBy('sort_order')->pluck('id')->all())->toBe([$b->id, $a->id]);
+    expect(AssessmentType::whereIn('id', [$a->id, $b->id])->orderBy('sort_order')->pluck('id')->all())->toBe([$b->id, $a->id]);
     expect($a->items()->pluck('id')->all())->toBe([$i2->id, $i1->id]);
     actAs($t['admin'])->postJson(ou('assessment.order'), ['kind' => 'items', 'type' => $b->id, 'ids' => [$i1->id]])->assertStatus(422);
+});
+
+test('new organizations start with the leadership roles, and assessors see the level descriptions of each item', function () {
+    $t = orgTree();
+    $types = AssessmentType::with('items')->orderBy('sort_order')->get();
+    expect($types->pluck('name')->first())->toBe('Role 1 - Individual Contributor')->and($types)->toHaveCount(6)
+        ->and($types->sum(fn ($ty) => $ty->items->count()))->toBe(47)
+        ->and($types->every(fn ($ty) => $ty->items->every(fn ($i) => count($i->levels) === 5)))->toBeTrue();
+
+    $type = $types->first();
+    $c = AssessmentCycle::create(['name' => 'Q4 360', 'opens_on' => '2026-11-12', 'closes_on' => '2026-11-30']);
+    actAs($t['admin'])->post(ou('assessment.matrix', [$c]), ['cells' => [$t['lead']->id => [$type->id]]]);
+    $this->travelTo(now()->parse('2026-11-12 03:00:00'));
+    app(Assessments::class)->advance($t['org']);
+    $slot = AssessmentAssessor::where('assessor_id', $t['rep']->id)->firstOrFail();
+    actAs($t['rep'])->get(ou('assessment.answer', [$slot]))->assertOk()
+        ->assertSee($type->items->first()->text)->assertSee($type->items->first()->levels[4]);
 });

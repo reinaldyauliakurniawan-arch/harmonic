@@ -5,6 +5,7 @@ use App\Http\Controllers\Org\EvaluatorController;
 use App\Models\AssessmentAssessor;
 use App\Models\AssessmentAssignment;
 use App\Models\AssessmentCycle;
+use App\Models\AssessmentItem;
 use App\Models\AssessmentType;
 use App\Models\Belief;
 use App\Models\DiagnosticCycle;
@@ -194,4 +195,23 @@ test('new organizations start with the leadership roles, and assessors see the l
     $slot = AssessmentAssessor::where('assessor_id', $t['rep']->id)->firstOrFail();
     actAs($t['rep'])->get(ou('assessment.answer', [$slot]))->assertOk()
         ->assertSee($type->items->first()->text)->assertSee($type->items->first()->levels[4]);
+});
+
+test('organizations seeded with the original leadership text get the English items, and their own items stay as written', function () {
+    orgTree();
+    $migration = require database_path('migrations/2026_11_12_000001_translate_leadership_items.php');
+    $old = (new ReflectionClassConstant($migration, 'OLD_TITLES'))->getValue();
+    $english = collect(config('assessment.leadership'))->flatMap(fn ($type) => $type['items'])->values();
+    expect($old)->toHaveCount($english->count());
+
+    $items = AssessmentItem::whereNotNull('levels')->orderBy('id')->get();
+    [$first, $last] = [$items->first(), $items->last()];
+    $first->update(['text' => $old[0], 'levels' => ['lama']]);
+    $last->update(['text' => $old[46], 'levels' => ['lama']]);
+    $own = AssessmentType::findOrFail($first->type_id)->items()->create(['text' => 'Performance Monitoring', 'sort_order' => 99]);
+
+    $migration->up();
+
+    expect($first->fresh()->text)->toBe($english[0][0])->and($first->fresh()->levels)->toBe($english[0][1])
+        ->and($last->fresh()->text)->toBe($english[46][0])->and($own->fresh()->text)->toBe('Performance Monitoring');
 });

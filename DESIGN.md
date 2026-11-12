@@ -1,213 +1,405 @@
-# DESIGN.md — The Harmonic System
+# Cal.com — Style Reference
+> Monochrome Utility, Human Touch. A system that prioritizes clarity and function with a stark black-and-white palette, but softens it with friendly typography and rounded forms.
 
-Dial: ENERGY 2 / RHYTHM 3 / MOTION 2
+**Theme:** light
 
-## Intent
+Source measurements are normalized; roles and recommendations are interpreted. Font summary lists are independent, not paired by position. HTML examples are reconstructions, not source components.
 
-- **Who**: a team leader opening the app on a laptop on Monday morning before the Weekly Meeting; a team member entering this week's numbers on a phone in two minutes.
-- **What they must do**: see what is off track, run the meeting, decide who owns what, close problems.
-- **How it should feel**: a conductor's score. Calm, exact, every part knowing when it comes in. Comfortable to look at every week for years, not impressive once.
-- **Finish level**: the care of a first-party app from a large design team. That comes from precision, not from borrowing anyone's look: every width, gap, and state is decided; feedback is immediate; motion is small and physical; nothing shifts, clips, or waits without saying so.
+The design feels like a pragmatic, high-precision instrument. It's built on a strict and disciplined monochrome palette of black, white, and echelon grays, where color is intentionally excluded from the core UI to emphasize function. The custom font, 'Cal Sans', defines the visual identity with its geometric yet open letterforms, giving headlines a technical but approachable character. Nearly all interactive elements are either solid black or pill-shaped outlines, creating a binary system of action. Cards are the fundamental building block, using soft 8-12px radii and extremely subtle shadows to create a quiet, layered topology on a light gray background.
 
-## Identity
+## Tokens — Colors
 
-The world of the product is the printed orchestral score: paper, engraving ink, staff lines, bar lines, the brass section, the patina on old brass, the oxblood seats of a concert hall. The metaphor lives in structure and language, never in decoration.
+| Name | Value | Token | Role |
+|------|-------|-------|------|
+| Ink | `#101010` | `--color-ink` | Primary CTAs, primary text, active states. Used as the strongest dark tone, providing maximum contrast and visual weight for key actions. |
+| Action Blue | `#0099ff` | `--color-action-blue` | Tertiary links, informational banner text. A rare, functional splash of color reserved for secondary calls to action and informational highlights. |
+| White | `#ffffff` | `--color-white` | Card backgrounds, text on dark buttons. |
+| Paper | `#f4f4f4` | `--color-paper` | Main page background. |
+| Graphite | `#242424` | `--color-graphite` | Headlines, primary body text. |
+| Slate | `#6b7280` | `--color-slate` | Secondary text, descriptive copy, disabled states. |
+| Stone | `#898989` | `--color-stone` | Placeholder text, decorative UI elements. |
+| Silver | `#e5e7eb` | `--color-silver` | Borders, dividers, subtle backgrounds. |
+| Info Banner BG | `#eff6fe` | `--color-info-banner-bg` | Background for the top-of-page informational banner. |
+| Google Blue | `#4285f4` | `--color-google-blue` | Integration logos only. |
+| Google Yellow | `#fbbc04` | `--color-google-yellow` | Integration logos only. |
+| Google Green | `#34a853` | `--color-google-green` | Integration logos only. |
+| Google Red | `#ea4335` | `--color-google-red` | Integration logos only. |
 
-**Signature**: the Metrics Dashboard is drawn like a score. Each week is a measure separated by a thin bar line, the current week is marked in brass, and a double bar line closes the quarter. These lines are the column dividers the grid needs anyway; they are given meaning, not added.
+## Tokens — Typography
 
-**Rejected defaults**
+### Cal Sans — Primary headline font. Its geometric forms and slightly wide stance give the brand a unique, technical-yet-friendly voice. Used exclusively for headings to establish hierarchy. · `--font-cal-sans`
+- **Substitute:** Poppins, Gilroy
+- **Weights:** 600
+- **Sizes:** 20px, 24px, 48px, 64px
+- **Line height:** 1.10 - 1.30
+- **Letter spacing:** +0.01em tracking adds airiness at display sizes.
+- **Role:** Primary headline font. Its geometric forms and slightly wide stance give the brand a unique, technical-yet-friendly voice. Used exclusively for headings to establish hierarchy.
 
-1. Blue or purple SaaS accent, gradients, glows, glass.
-2. Dashboards built from rows of identical KPI cards with soft shadows.
-3. Music clip art: notes, clefs, piano keys, staff-line backgrounds, sheet-music textures.
-4. Template chrome: all-caps eyebrow labels, meta strings joined with middle dots, arrows appended to buttons, monospace for small labels, pill-shaped everything.
+### Cal Sans UI Variable Light — Primary body and UI text font. The light weight and tight negative tracking create a clean, modern text block that is readable without being loud. · `--font-cal-sans-ui-variable-light`
+- **Substitute:** Inter Light
+- **Weights:** 300
+- **Sizes:** 14px, 16px, 18px
+- **Line height:** 1.40 - 1.50
+- **Letter spacing:** Tight negative tracking from -0.19px to -0.24px for a compact feel.
+- **Role:** Primary body and UI text font. The light weight and tight negative tracking create a clean, modern text block that is readable without being loud.
 
-A known risk: warm paper plus a serif title is a common generated look. It stays because it comes from the score, and it is held in check by three rules: the serif appears only in page titles, the paper is never a decorative hero surface, and the product's character is carried by the score grid and the structure, not by the background.
+### Inter — Secondary UI and body font. Used for smaller text, labels, and inside complex components like the calendar widget where utmost clarity is required. · `--font-inter`
+- **Substitute:** system-ui, -apple-system, sans-serif
+- **Weights:** 400, 500, 600
+- **Sizes:** 10px, 12px, 14px, 16px
+- **Line height:** 1.14 - 1.43
+- **Role:** Secondary UI and body font. Used for smaller text, labels, and inside complex components like the calendar widget where utmost clarity is required.
 
-## Color tokens
+### Matter — Tertiary UI text for captions and metadata where a highly legible, neutral choice is needed. · `--font-matter`
+- **Substitute:** Inter
+- **Weights:** 400
+- **Sizes:** 10px, 12px, 14px
+- **Line height:** 1.14 - 1.50
+- **Role:** Tertiary UI text for captions and metadata where a highly legible, neutral choice is needed.
 
-One action color (brass). Two status colors (verdigris, oxblood), used only for status. Everything else is paper, ink, and lines.
+### Type Scale
 
-```css
-@theme {
-  --color-paper: #F3EFE6;          /* page background, one step below content */
-  --color-surface: #FFFDF9;        /* cards, boxes, dialogs, kanban cards, inputs */
-  --color-field: #EFEADF;          /* read-only and inset areas */
-  --color-hover: #ECE7DB;          /* row hover, segmented track */
-  --color-sidebar: #1C1B19;        /* the dark concert hall: sidebar and phone menu */
+| Role | Family | Weight | Size | Line Height | Letter Spacing | Token |
+|------|--------|--------|------|-------------|----------------|-------|
+| caption | — | — | 12px | 1.4 | -0.24px | `--text-caption` |
+| body-sm | — | — | 14px | 1.5 | -0.2px | `--text-body-sm` |
+| body | — | — | 16px | 1.5 | -0.19px | `--text-body` |
+| subheading | — | — | 18px | 1.4 | -0.2px | `--text-subheading` |
+| heading-sm | — | — | 20px | 1.3 | 0.2px | `--text-heading-sm` |
+| heading | — | — | 24px | 1.3 | 0.24px | `--text-heading` |
+| heading-lg | — | — | 48px | 1.1 | 0.48px | `--text-heading-lg` |
+| display | — | — | 64px | 1.1 | 0.64px | `--text-display` |
 
-  --color-ink: #1D2027;            /* primary text */
-  --color-ink-secondary: #5A5D64;  /* labels, descriptions */
-  --color-ink-muted: #65686E;      /* placeholders, timestamps */
+## Tokens — Spacing & Shapes
 
-  --color-line: #E3DCCB;           /* staff line: default hairline */
-  --color-bar: #CFC6B2;            /* bar line: grid column dividers, input borders */
-  --color-line-strong: #A79E89;    /* focused input border, strong divider */
+**Density:** compact
 
-  --color-brass: #7A5718;          /* the only action color */
-  --color-brass-hover: #654712;
-  --color-brass-subtle: #F1E8D6;   /* current-week column, selected tab background */
-  --color-on-brass: #FAF7F0;
+### Spacing Scale
 
-  --color-on-track: #2F6F62;       /* verdigris */
-  --color-on-track-subtle: #E3EFEC;
-  --color-off-track: #8E2F2F;      /* oxblood: off track, errors, destructive */
-  --color-off-track-subtle: #F6E6E4;
+| Name | Value | Token |
+|------|-------|-------|
+| 4 | 4px | `--spacing-4` |
+| 5 | 5px | `--spacing-5` |
+| 6 | 6px | `--spacing-6` |
+| 8 | 8px | `--spacing-8` |
+| 10 | 10px | `--spacing-10` |
+| 12 | 12px | `--spacing-12` |
+| 16 | 16px | `--spacing-16` |
+| 20 | 20px | `--spacing-20` |
+| 24 | 24px | `--spacing-24` |
+| 28 | 28px | `--spacing-28` |
+| 32 | 32px | `--spacing-32` |
+| 40 | 40px | `--spacing-40` |
+| 48 | 48px | `--spacing-48` |
+| 80 | 80px | `--spacing-80` |
 
-  --font-title: "Instrument Serif", Georgia, "Times New Roman", serif;
-  --font-sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+### Border Radius
 
-  --radius-control: 4px;
-  --radius-panel: 8px;
-}
+| Element | Value |
+|---------|-------|
+| tags | 9999px |
+| cards | 12px |
+| inputs | 8px |
+| buttons | 9999px (pills), 8px (rectangular) |
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { /* same values as [data-theme="dark"] below */ }
-}
+### Shadows
 
-:root[data-theme="dark"] {
-  --color-paper: #15171C;          /* the dark concert hall */
-  --color-surface: #1C1F25;
-  --color-field: #23262E;
-  --color-hover: #262A32;
-  --color-ink: #ECE6D8;            /* ivory */
-  --color-ink-secondary: #A8A49A;
-  --color-ink-muted: #959188;
-  --color-line: #2E323A;
-  --color-bar: #3A3F49;
-  --color-line-strong: #5A5E68;
-  --color-brass: #D1A85A;
-  --color-brass-hover: #DDB86F;
-  --color-brass-subtle: #2E2818;
-  --color-on-brass: #15171C;
-  --color-on-track: #6FB3A3;
-  --color-on-track-subtle: #1A2B27;
-  --color-off-track: #E08A80;
-  --color-off-track-subtle: #2F1D1C;
-}
-```
+| Name | Value | Token |
+|------|-------|-------|
+| sm | `rgba(36, 36, 36, 0.7) 0px 1px 5px -4px, rgba(36, 36, 36, ...` | `--shadow-sm` |
+| subtle | `rgba(255, 255, 255, 0.15) 0px 2px 0px 0px inset` | `--shadow-subtle` |
+| sm-2 | `rgba(19, 19, 22, 0.7) 0px 1px 5px -4px, rgba(34, 42, 53, ...` | `--shadow-sm-2` |
+| sm-3 | `rgba(19, 19, 22, 0.7) 0px 1px 5px -4px, rgba(34, 42, 53, ...` | `--shadow-sm-3` |
+| sm-4 | `rgba(34, 42, 53, 0.05) 0px 4px 8px 0px` | `--shadow-sm-4` |
+| subtle-2 | `rgb(255, 255, 255) 0px 2px 0px 0px inset` | `--shadow-subtle-2` |
+| subtle-3 | `rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0...` | `--shadow-subtle-3` |
 
-Implement the dark block once with both selectors so the values are not duplicated. Theme choice (System, Light, Dark) lives in the profile and sets `data-theme` on `<html>`.
+### Layout
 
-**Checked contrast (WCAG 2.2 AA)**
-
-| Pair | Light | Dark |
-| --- | --- | --- |
-| ink on paper | 15.2 | 14.4 |
-| ink-secondary on paper | 6.2 | 7.2 |
-| ink-muted on field | 4.9 | about 4.7 |
-| brass on paper | 6.1 | 8.1 |
-| on-brass on brass (buttons) | 6.1 | 8.1 |
-| on-track on paper | 5.5 | 7.4 |
-| off-track on paper | 7.6 | 6.9 |
-| brass on brass-subtle | 5.4 | — |
-
-Status never relies on color alone: off track also shows a small filled-triangle icon and the accessible label "Off track"; missing shows a dashed outline and the label "Not entered".
-
-## Typography
-
-Load from Google Fonts: Instrument Serif (400) and Instrument Sans (400, 500, 600). Numbers everywhere use `font-variant-numeric: tabular-nums`.
-
-| Token | Font | Size / line height | Weight | Use |
-| --- | --- | --- | --- | --- |
-| `title` | Instrument Serif | 44/48 (34/38 under 768 px), tracking -0.01em | 400 | Page titles only, one per page |
-| `heading` | Instrument Sans | 20/28 | 600 | Section headings inside a page |
-| `figure` | Instrument Sans | 34/38, tracking -0.02em | 500 | A few real counts read at a glance (Home) |
-| `subheading` | Instrument Sans | 15/22 | 600 | Panel titles, table group headers |
-| `body` | Instrument Sans | 15/23 | 400 | Default text, forms |
-| `small` | Instrument Sans | 13/19 | 400 | Table cells, helper text |
-| `label` | Instrument Sans | 13/18 | 500 | Field labels, column headers, nav items |
-| `caption` | Instrument Sans | 12/16 | 400 | Timestamps, hints |
-
-Rules: sentence case everywhere, no uppercase labels, no letter-spaced eyebrows. Emphasis inside text uses 500, never bold. Body text lines stay under 75 characters (`max-width: 68ch` on prose).
-
-## Space, shape, depth
-
-- Spacing scale on a 4 px base: 4, 8, 12, 16, 24, 32, 48. Inside components 8–16; between groups 24; between page regions 32–48.
-- Radius: 8 px on buttons, inputs, nav items, and segment buttons; 16 px on cards, boxes, grouped lists, and tables; 12 px on banners, side panels, and dialogs; 4 px on badges and kanban cards; full circle only for avatars. Nothing is pill-shaped.
-- The page (`paper` `#F3EFE6`) sits one step below the content. Content lives on `surface` cards: `.card` for a titled section (header row with the title, hairline under it, lists inside run edge to edge), `.box` for a padded block (forms on reading pages, the fact column on detail pages). Lists and tables inside a card or box lose their own group edge.
-- Grouped surfaces: lists (`.rows`) and tables sit on one `surface` group with 16 px radius and the group edge (`0 1px 2px` plus a 1 px `line` ring), rows separated by hairlines inside. This is the single resting elevation; it says "these belong together".
-- Popovers, dropdowns, and dialogs float with one shadow: `0 8px 24px rgb(29 32 39 / 0.12)`.
-- No gradients, glass, glow, textures, or background patterns.
-
-## Layout
-
-- Desktop: left sidebar 240 px on `paper` with a hairline right border. The content column is centered in the space right of the sidebar, padding 40 px, at one of three measures:
-  - `reading` 720 px: forms, settings, profile, the Fundamentals, a procedure's steps.
-  - `standard` 1040 px: lists, Home, and detail pages. The default.
-  - `wide` full width: the metric grid, kanban, Winning Formation, calendar, the meeting runner, matrices.
-- Detail pages (a task, problem, mission, procedure, metric) use two columns at 1024 px and up: the content, and a 300 px fact column (`dl` rows on hairlines) that stays in view while the content scrolls. Under 1024 px the facts come first, then the content.
-- Home uses two columns at 1024 px and up: what needs action (tasks, metrics, setup) on the left, time (today, meetings) in a 320 px column on the right.
-- Page header: serif title, one sentence of description in `ink-secondary` below it, primary action aligned right on the title's baseline. At most one brass button per view.
-- Under 768 px: sidebar becomes the bottom bar (Home, Tasks, Calendar, My Numbers, Menu); page padding 16 px; side panels open full screen.
-- Lists are rows inside one grouped surface, not separate cards. Cards appear only where an object is physically moved (kanban) or stands alone (event panel).
+- **Page max-width:** 1200px
+- **Section gap:** 96px
+- **Card padding:** 24px
 
 ## Components
 
-**Buttons.** Primary: brass fill, `on-brass` text, 4 px radius, 40 px tall (44 px on touch). Secondary: transparent with a 1 px `bar` border, ink text. Ghost: text only, `hover` background. Destructive: secondary style with off-track text. Labels are verbs: "Save changes", "Start meeting". No icons-only buttons without `aria-label`; no arrows in labels.
+### Primary CTA Button
+**Role:** The main call-to-action on the page.
 
-**Inputs.** `surface` background, 1 px `bar` border, 8 px radius; hover border `line-strong`; focus border `line-strong` with a soft 3 px brass halo (16% brass) and the focus ring. The `field` token stays for read-only and inset areas only, so a page of forms reads light, not filled. Label above, helper or error text below in `small`. Errors: off-track border and text, focus moves to the first error.
+A pill-shaped button. Background: Ink (#101010). Text: White (#ffffff). Font: Cal Sans UI at 14-16px. Radius: 9999px. Padding: ~12px 24px.
 
-**Focus ring.** `outline: 2px solid var(--color-brass); outline-offset: 2px` on `:focus-visible` for every interactive element.
+### Secondary Ghost Button
+**Role:** A secondary call-to-action, often next to the primary.
 
-**Tables.** No zebra striping. Rows separated by `line`; header row in `label` style on `paper`; row hover `hover`. Numeric columns right-aligned. Sticky first column on horizontal scroll.
+A pill-shaped outline button. Background: transparent or Paper (#f4f4f4). Text: Graphite (#242424). Border: 1px solid Silver (#e5e7eb). Radius: 9999px. Padding: ~12px 24px.
 
-**Metric grid (signature).** Week columns divided by 1 px `bar` vertical lines. The current week: header in brass at 600, column background `brass-subtle`. Quarter end: a double bar line (`border-left: 3px double var(--color-ink)`) after W13. Cell values: on-track or off-track color, 500 weight for the current week; missing cells show a 1 px dashed off-track outline and the label "Not entered" for screen readers. A small dot after a value marks a note. Inline editing replaces the cell text with an input of the same width, so nothing shifts.
+### Header CTA Button
+**Role:** The main call-to-action in the sticky header.
 
-**Status.** On track: verdigris text and a small check icon. Off track: oxblood text and a small triangle icon. Pairs with `-subtle` backgrounds only for banners and badges.
+A rectangular button. Background: Ink (#101010). Text: White (#ffffff). Font: Cal Sans UI at 14px. Radius: 8px. Padding: ~8px 16px.
 
-**Navigation.** Daily places sit at the top with icons, in the same order as the phone bar: Home, Tasks, Calendar, My Numbers stays inside Measurements. Then the six sections, each with its two instruments (Team also lists Teams), then Assessments (Diagnostic, 360), then Admin for Org Admins. Section groups are plain `label` text in `ink-muted` (sentence case, no uppercase). The active item follows the Sidebar rule below. The list scrolls inside the sidebar with a 24 px fade at the bottom edge; the account menu stays pinned below it.
+### Tag Button
+**Role:** Small, non-critical buttons for categorizing or filtering content.
 
-**Tabs.** View switches (Mine / Team / All, Active / Departed) are a segmented control: a `hover` track with 3 px padding, the current segment on `surface` with a 1 px shadow. The meeting runner keeps its underlined segment rail.
+A small pill button. Background: Paper (#f4f4f4) or Silver (#e5e7eb). Text: Graphite (#242424). Radius: 9999px. Padding: ~4px 12px.
 
-**Sidebar.** The dark concert hall in both themes (`sidebar` `#1C1B19`, in dark theme `#0E0F12`). Its color tokens are re-declared on `.sidebar` (ivory ink, warm lines, lighter brass `#D6AE60`) so the org switcher, account menu, and their dropdowns read on it without their own styles. Every item has a 16 px Lucide icon chosen for its meaning (Formation is a network, Problems an alert, Solve a puzzle). Items are 8 px blocks; the current one is a lifted block (`#34312A`) with a 3 px brass edge and a brass icon. No staff lines in the sidebar: the score grid carries the identity.
+### Scheduling Widget Card
+**Role:** The hero component showcasing the product's core functionality.
 
-**Collapsing.** A button at the top of the sidebar folds it into a 64 px rail of icons (labels stay for screen readers, a tooltip names each icon, hairlines separate the groups); the content column widens with it. Each section group is a `details` that starts closed and opens from its name, with a chevron that turns; the group holding the current page is always open, so the sidebar shows the daily places, the section names, and only the instruments around where you are. Both choices are remembered in two plain cookies (`nav_rail`, `nav_open`) that the server reads, so pages render already folded with no flash; their values are checked against the known group names. The width animates in 150 ms only while the person toggles it, never on load or resize.
+Background: White (#ffffff). Padding: 16px. Radius: 12px. Shadow: `rgba(36, 36, 36, 0.05) 0px 4px 8px 0px`. Contains an interactive calendar UI.
 
-**At a glance (Home).** One grouped strip of real counts (tasks due, numbers to enter, team metrics off track or missing, meetings coming up), each a link to its list, separated by hairlines. Zero shows in `ink-muted`. One strip, not a grid of cards.
+### Navigation Link
+**Role:** Links in the main site header.
 
-**Side panel and dialog.** `surface` background, 8 px radius on the free edges, the one floating shadow. Panel width 440 px on desktop. Dialogs max 520 px, title in `heading`, actions right-aligned with the primary last.
+Text-only link. Color: Graphite (#242424). Font: Cal Sans UI at 14-16px. No underline.
 
-**Kanban.** Columns are `paper` with a `line` hairline between them, titled in `label` with a count. Cards on `surface`, 1 px `line` border, 4 px radius, 12 px padding: title, then a row with the Responsible's initials, due date, and step progress "2/5". Dragged card lifts with the floating shadow; drop targets show a 2 px brass line where the card will land.
+## Do's and Don'ts
 
-**Meeting runner.** Segment rail across the top: seven segments as plain text, the current one in brass with a brass underline, completed ones in `ink-secondary`. The countdown sits right of the title in `heading` with tabular numbers; overtime turns oxblood with a leading "+". Under an hour it reads `4:05`; from an hour on it reads `1 h 12 m` so it never grows into a long number.
+### Do
+- Use 'Cal Sans' weight 600 exclusively for headings (size 20px and above).
+- Employ a strict monochrome palette (Ink, Graphite, Slate, Paper, White) for 99% of the UI.
+- Use pill-shaped buttons (9999px radius) for all primary and secondary page CTAs.
+- Apply a 12px border radius to all content cards and large containers.
+- Use subtle, diffuse shadows (`rgba(36, 36, 36, 0.05) 0px 4px 8px 0px`) for elevation.
+- Set body copy in 'Cal Sans UI Variable Light' with tight negative letter-spacing.
+- Reserve the single 'Action Blue' (#0099ff) for secondary links or informational highlights.
 
-**I-S.O.L.V.E stepper.** A numbered vertical list of the six steps on the left (a real sequence, so numbers are earned); the current step in brass; completed steps show a check.
+### Don't
+- Do not introduce any new colors to the core UI; confine color to logos and the single blue accent.
+- Do not use sharp corners on buttons or cards.
+- Do not use font weights heavier than 600.
+- Do not use traditional outlined buttons; use either solid 'Ink' or 'ghost' pill buttons.
+- Do not use gradients on any buttons or card backgrounds.
+- Do not use borders on cards; use shadows for separation.
+- Do not set body text in 'Cal Sans'; it is for headlines only.
 
-**Charts.** One Blade component, `<x-line-chart>`, that renders SVG on the server; no chart library and no JavaScript. Series lines in ink at 1.5 px; goal as a dashed `line-strong` line, or a `brass-subtle` band for between-goals; points colored by status. Axes in `caption`, gridlines in `line`. Every chart has a text summary for screen readers.
+## Elevation
 
-**Avatars.** 28 px circle with initials on `hover` background in `ink`. No photos in v1.
+- **Feature Card, Scheduling Widget:** `rgba(36, 36, 36, 0.05) 0px 4px 8px 0px`
+- **Hover/Focus Card:** `rgba(36, 36, 36, 0.7) 0px 1px 5px -4px, rgba(36, 36, 36, 0.05) 0px 4px 8px 0px`
 
-**Empty states.** A heading naming the space ("Start your Problem Queue"), one sentence on what goes here, one button. No illustrations.
+## Imagery
 
-**Loading.** Skeleton rows in the final layout using the `hover` color, no shimmer animation.
+The visual language is entirely product-centric and informational. Imagery consists solely of clean, isolated product UI screenshots and the logos of integration partners. There is no lifestyle photography, illustration, or abstract graphics. This choice reinforces the brand's focus on its functional capabilities, letting the product itself be the hero. All visual elements are presented within contained cards, never full-bleed, maintaining the page's orderly, grid-based structure.
 
-**Saved state.** Autosaving fields confirm in place: a 14 px check and "Saved" in `ink-secondary` next to the field for 2 s; a failure stays until the next attempt and says what to do.
+## Layout
 
-**Meta lines.** Facts about an item sit in separate spans with 12 px between them, or in a `dl`. Never join them with middle dots.
+The site uses a centered layout within a max-width of 1200px, creating generous breathing room on either side. Sections are clearly demarcated by 96px of vertical space, establishing a calm, deliberate rhythm. The hero combines a large headline stack with a prominent product UI visual. Content below follows a predictable pattern of centered headlines followed by 3-column feature card grids or alternating text-and-visual blocks. This simple, highly structured approach emphasizes clarity and ease of navigation.
 
-**Toasts.** Bottom-left, `ink` background with `paper` text, 4 px radius, disappear after 3 s, never stacked more than two. Copy states the result: "Saved", "Task created".
+## Agent Prompt Guide
 
-## Icons
+### Quick Color Reference
+- **Page Background:** `#f4f4f4` (Paper)
+- **Card Background:** `#ffffff` (White)
+- **Headline Text:** `#242424` (Graphite)
+- **Body Text:** `#242424` (Graphite)
+- **Primary CTA:** `#101010` (Ink) background, `#ffffff` (White) text
+- **Borders/Dividers:** `#e5e7eb` (Silver)
 
-Lucide icons (ISC license), copied as SVG files into `resources/icons/` and rendered by `<x-icon name="check" />`; only the icons in use are copied. 1.5 px stroke, 16 px inline and 20 px in navigation, colored with `currentColor`. Decorative icons get `aria-hidden`. Never use icons as decoration in headings.
+### Example Component Prompts
+1.  **Hero Section:** "Create a hero section with a `#f4f4f4` background. On the left, add a headline 'The better way to schedule' using 'Cal Sans' at 64px, weight 600, color `#242424`, and line-height 1.1. Below it, add body text using 'Cal Sans UI' at 18px, color `#6b7280'. On the right, place a large card with a white background, 12px radius, and a subtle shadow `rgba(36, 36, 36, 0.05) 0px 4px 8px 0px` to represent a scheduling widget."
+2.  **Primary CTA Button:** "Create a button with the text 'Get started'. Make it pill-shaped with a `9999px` radius. Use a `#101010` background color and `#ffffff` text color. The font should be 'Cal Sans UI' at 16px. Use padding of 12px top/bottom and 24px left/right."
+3.  **Feature Card:** "Create a feature card with a `#ffffff` background, `24px` padding, a `12px` border radius, and a `rgba(36, 36, 36, 0.05) 0px 4px 8px 0px` box shadow. Inside, add a small numbered tag, a heading 'Connect your calendar' in 'Cal Sans' at 20px, and body text 'We'll handle all the cross-referencing' in 'Cal Sans UI' at 16px."
 
-## Motion
+## Similar Brands
 
-Only in response to an action, always ease-out, never longer than 200 ms:
+- **Calendly** — Direct competitor with a similar clean, utility-focused scheduling UI, but uses more color.
+- **Linear** — Shares the disciplined monochrome palette, precision typography, and subtle shadows.
+- **Vercel** — Similar use of a geometric sans-serif for headlines (Geist) against a stark black-and-white UI.
+- **Pitch** — Employs a custom slab-serif for identity and relies on a clean, card-based layout with a primarily B&W palette.
 
-- Hover and focus changes on buttons, rows, and nav items transition color and background in 120 ms.
-- Buttons press: `scale(0.98)` while held, 80 ms.
-- Menus and folded forms (`details`) fade and move 4 px in 120 ms when they open.
-- Panels fade and move 8 px in 150 ms; dialogs fade and scale from 0.97 in 150 ms; the kanban drop settles in 150 ms.
-- Page to page: the browser's cross-document view transition cross-fades the content column in 120 ms; the sidebar and phone bar stay still. Browsers without it simply navigate.
+## Quick Start
 
-Nothing animates on page load. `prefers-reduced-motion` removes all transitions.
+### CSS Custom Properties
 
-## Copy voice
+```css
+:root {
+  /* Colors */
+  --color-ink: #101010;
+  --color-action-blue: #0099ff;
+  --color-white: #ffffff;
+  --color-paper: #f4f4f4;
+  --color-graphite: #242424;
+  --color-slate: #6b7280;
+  --color-stone: #898989;
+  --color-silver: #e5e7eb;
+  --color-info-banner-bg: #eff6fe;
+  --color-google-blue: #4285f4;
+  --color-google-yellow: #fbbc04;
+  --color-google-green: #34a853;
+  --color-google-red: #ea4335;
 
-Plain, direct, specific. Sentence case, no "successfully", "please", or exclamation marks. Errors say what happened and what to do. Buttons keep the same verb through the flow: "Publish" leads to "Published". Use the instrument names from PRD section 3 exactly.
+  /* Typography — Font Families */
+  --font-cal-sans: 'Cal Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-cal-sans-ui-variable-light: 'Cal Sans UI Variable Light', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-matter: 'Matter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-## Component checkpoint
+  /* Typography — Scale */
+  --text-caption: 12px;
+  --leading-caption: 1.4;
+  --tracking-caption: -0.24px;
+  --text-body-sm: 14px;
+  --leading-body-sm: 1.5;
+  --tracking-body-sm: -0.2px;
+  --text-body: 16px;
+  --leading-body: 1.5;
+  --tracking-body: -0.19px;
+  --text-subheading: 18px;
+  --leading-subheading: 1.4;
+  --tracking-subheading: -0.2px;
+  --text-heading-sm: 20px;
+  --leading-heading-sm: 1.3;
+  --tracking-heading-sm: 0.2px;
+  --text-heading: 24px;
+  --leading-heading: 1.3;
+  --tracking-heading: 0.24px;
+  --text-heading-lg: 48px;
+  --leading-heading-lg: 1.1;
+  --tracking-heading-lg: 0.48px;
+  --text-display: 64px;
+  --leading-display: 1.1;
+  --tracking-display: 0.64px;
 
-Before writing UI code for any screen, state in the task notes: who uses this screen and what they must finish; which tokens it uses and why; which states exist (loading, empty, error, validation); how it works at 360 px; and which one element on the screen gets attention. If any answer is "it's common", choose again.
+  /* Typography — Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Spacing */
+  --spacing-4: 4px;
+  --spacing-5: 5px;
+  --spacing-6: 6px;
+  --spacing-8: 8px;
+  --spacing-10: 10px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-28: 28px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
+  --spacing-80: 80px;
+
+  /* Layout */
+  --page-max-width: 1200px;
+  --section-gap: 96px;
+  --card-padding: 24px;
+
+  /* Border Radius */
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 29px;
+  --radius-full: 100px;
+  --radius-full-2: 120px;
+  --radius-full-3: 1000px;
+  --radius-full-4: 9999px;
+
+  /* Named Radii */
+  --radius-tags: 9999px;
+  --radius-cards: 12px;
+  --radius-inputs: 8px;
+  --radius-buttons: 9999px (pills), 8px (rectangular);
+
+  /* Shadows */
+  --shadow-sm: rgba(36, 36, 36, 0.7) 0px 1px 5px -4px, rgba(36, 36, 36, 0.05) 0px 4px 8px 0px;
+  --shadow-subtle: rgba(255, 255, 255, 0.15) 0px 2px 0px 0px inset;
+  --shadow-sm-2: rgba(19, 19, 22, 0.7) 0px 1px 5px -4px, rgba(34, 42, 53, 0.1) 0px 0px 0px 1px, rgba(34, 42, 53, 0.05) 0px 4px 8px 0px;
+  --shadow-sm-3: rgba(19, 19, 22, 0.7) 0px 1px 5px -4px, rgba(34, 42, 53, 0.08) 0px 0px 0px 1px, rgba(34, 42, 53, 0.05) 0px 4px 8px 0px;
+  --shadow-sm-4: rgba(34, 42, 53, 0.05) 0px 4px 8px 0px;
+  --shadow-subtle-2: rgb(255, 255, 255) 0px 2px 0px 0px inset;
+  --shadow-subtle-3: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 0px 2px 0px;
+}
+```
+
+### Tailwind v4
+
+```css
+@theme {
+  /* Colors */
+  --color-ink: #101010;
+  --color-action-blue: #0099ff;
+  --color-white: #ffffff;
+  --color-paper: #f4f4f4;
+  --color-graphite: #242424;
+  --color-slate: #6b7280;
+  --color-stone: #898989;
+  --color-silver: #e5e7eb;
+  --color-info-banner-bg: #eff6fe;
+  --color-google-blue: #4285f4;
+  --color-google-yellow: #fbbc04;
+  --color-google-green: #34a853;
+  --color-google-red: #ea4335;
+
+  /* Typography */
+  --font-cal-sans: 'Cal Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-cal-sans-ui-variable-light: 'Cal Sans UI Variable Light', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-matter: 'Matter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Typography — Scale */
+  --text-caption: 12px;
+  --leading-caption: 1.4;
+  --tracking-caption: -0.24px;
+  --text-body-sm: 14px;
+  --leading-body-sm: 1.5;
+  --tracking-body-sm: -0.2px;
+  --text-body: 16px;
+  --leading-body: 1.5;
+  --tracking-body: -0.19px;
+  --text-subheading: 18px;
+  --leading-subheading: 1.4;
+  --tracking-subheading: -0.2px;
+  --text-heading-sm: 20px;
+  --leading-heading-sm: 1.3;
+  --tracking-heading-sm: 0.2px;
+  --text-heading: 24px;
+  --leading-heading: 1.3;
+  --tracking-heading: 0.24px;
+  --text-heading-lg: 48px;
+  --leading-heading-lg: 1.1;
+  --tracking-heading-lg: 0.48px;
+  --text-display: 64px;
+  --leading-display: 1.1;
+  --tracking-display: 0.64px;
+
+  /* Spacing */
+  --spacing-4: 4px;
+  --spacing-5: 5px;
+  --spacing-6: 6px;
+  --spacing-8: 8px;
+  --spacing-10: 10px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-28: 28px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
+  --spacing-80: 80px;
+
+  /* Border Radius */
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 29px;
+  --radius-full: 100px;
+  --radius-full-2: 120px;
+  --radius-full-3: 1000px;
+  --radius-full-4: 9999px;
+
+  /* Shadows */
+  --shadow-sm: rgba(36, 36, 36, 0.7) 0px 1px 5px -4px, rgba(36, 36, 36, 0.05) 0px 4px 8px 0px;
+  --shadow-subtle: rgba(255, 255, 255, 0.15) 0px 2px 0px 0px inset;
+  --shadow-sm-2: rgba(19, 19, 22, 0.7) 0px 1px 5px -4px, rgba(34, 42, 53, 0.1) 0px 0px 0px 1px, rgba(34, 42, 53, 0.05) 0px 4px 8px 0px;
+  --shadow-sm-3: rgba(19, 19, 22, 0.7) 0px 1px 5px -4px, rgba(34, 42, 53, 0.08) 0px 0px 0px 1px, rgba(34, 42, 53, 0.05) 0px 4px 8px 0px;
+  --shadow-sm-4: rgba(34, 42, 53, 0.05) 0px 4px 8px 0px;
+  --shadow-subtle-2: rgb(255, 255, 255) 0px 2px 0px 0px inset;
+  --shadow-subtle-3: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 0px 2px 0px;
+}
+```

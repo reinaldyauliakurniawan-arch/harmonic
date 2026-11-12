@@ -14,7 +14,7 @@
 <html lang="en" @if (in_array(request()->cookie('theme'), ['light', 'dark'], true)) data-theme="{{ request()->cookie('theme') }}" @endif>
 <head><x-head :title="$title" /></head>
 <body class="min-h-screen lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-    <header class="sidebar flex flex-col px-6 py-6 lg:sticky lg:top-0 lg:h-screen lg:px-12 lg:py-12">
+    <header class="sidebar flex flex-col px-6 py-6 lg:border-r lg:sticky lg:top-0 lg:h-screen lg:px-12 lg:py-12">
         <p class="wordmark text-[28px] leading-8 lg:text-[36px] lg:leading-10">Harmonic</p>
         <p class="mt-2 max-w-[34ch] text-small text-ink-secondary lg:mt-4 lg:text-body">Run your organization on six sections, one week at a time.</p>
         <ol class="mt-auto hidden lg:block" aria-label="The six sections">

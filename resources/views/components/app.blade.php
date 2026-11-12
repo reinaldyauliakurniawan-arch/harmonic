@@ -3,7 +3,6 @@
     $org = app(\App\Services\Tenant::class)->organization;
     $me = app(\App\Services\Tenant::class)->membership;
     $access = app(\App\Services\Access::class);
-    // Each section is drawn as one staff: its instruments sit on a shared hairline (DESIGN.md identity).
     $nav = [
         ['Direction', [['Fundamentals', 'org.fundamentals.show', 'compass'], ['Alignment', 'org.alignment.index', 'check-check']]],
         ['Measurements', [['Dashboard', 'org.metrics.index', 'gauge'], ['My Numbers', 'org.numbers.index', 'hash']]],

@@ -1,6 +1,7 @@
 @php $dashes = [1 => '6 3', 2 => '2 3', 3 => '8 2 2 2', 4 => '1 2', 5 => '4 4', 6 => '10 3']; @endphp
-<figure class="w-full">
-    <svg viewBox="0 0 {{ $w }} {{ $h }}" class="h-auto w-full" role="img" aria-label="{{ $summary }}">
+{{-- On phones the chart keeps a readable minimum width and scrolls sideways instead of shrinking its text. --}}
+<figure class="w-full overflow-x-auto">
+    <svg viewBox="0 0 {{ $w }} {{ $h }}" class="h-auto w-full min-w-[520px] max-w-[720px]" role="img" aria-label="{{ $summary }}">
         @foreach ($ticks as $t)
             <line x1="{{ $padL }}" x2="{{ $w - 8 }}" y1="{{ $t['y'] }}" y2="{{ $t['y'] }}" stroke="var(--color-line)" stroke-width="1" />
             <text x="{{ $padL - 6 }}" y="{{ $t['y'] + 4 }}" text-anchor="end" font-size="11" fill="var(--color-ink-muted)">{{ $t['label'] }}</text>
@@ -19,8 +20,9 @@
         @endforeach
         @php $step = max(1, (int) ceil(count($labels) / 8)); @endphp
         @foreach ($labels as $i => $l)
-            @if ($i % $step === 0 || $i === count($labels) - 1)
-                <text x="{{ $xs[$i] }}" y="{{ $h - 8 }}" text-anchor="middle" font-size="11" fill="var(--color-ink-muted)">{{ $l }}</text>
+            {{-- Counted back from the last label so the newest one always shows and never collides with its neighbour. --}}
+            @if ((count($labels) - 1 - $i) % $step === 0)
+                <text x="{{ $xs[$i] }}" y="{{ $h - 8 }}" text-anchor="{{ $i === count($labels) - 1 && count($labels) > 1 ? 'end' : 'middle' }}" font-size="11" fill="var(--color-ink-muted)">{{ $l }}</text>
             @endif
         @endforeach
     </svg>

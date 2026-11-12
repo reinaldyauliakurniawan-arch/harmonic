@@ -43,7 +43,7 @@
                 <div class="min-h-28 border-b border-r border-line p-1.5 {{ $view === 'month' && $d->month !== $date->month ? 'bg-hover/50 text-ink-muted' : '' }} {{ $key === $today ? 'shadow-[inset_0_2px_0_var(--color-brass)]' : '' }}" @if ($key === $today) aria-current="date" @endif>
                     <p class="text-caption {{ $key === $today ? 'font-semibold text-brass' : '' }}">{{ $d->day }}</p>
                     @foreach ($byDay[$key] ?? [] as $e)
-                        <a href="{{ $eventLink($e) }}" class="mt-1 block truncate rounded-[4px] border border-line bg-surface px-1.5 py-0.5 text-caption hover:bg-hover">@unless ($e->all_day){{ $cal->local($e->starts_at)->format('H:i') }} @endunless{{ $e->title }}</a>
+                        <a href="{{ $eventLink($e) }}" class="mt-1 block truncate rounded-[6px] bg-surface px-1.5 py-0.5 text-caption shadow-[var(--shadow-group)] hover:bg-hover">@unless ($e->all_day){{ $cal->local($e->starts_at)->format('H:i') }} @endunless{{ $e->title }}</a>
                     @endforeach
                     @foreach ($markers[$key] ?? [] as $m)
                         <a href="{{ $m['url'] }}" class="mt-1 block truncate text-caption text-ink-secondary hover:underline">{{ $m['label'] }}</a>

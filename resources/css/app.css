@@ -145,8 +145,8 @@
     .input:focus { border-color: var(--color-ink); background: var(--color-surface); }
     /* Inputs show focus with the ink border and halo; the global outline on top doubled it. */
     .input:focus-visible { outline: none; }
-    /* Cal Sans draws a wide space; pull words together so two-word titles read as one. */
-    .title, .heading, .figure, .wordmark { word-spacing: -0.2em; }
+    /* Cal Sans draws its space wider than an "n" (0.6 em); pull it back to a normal gap. */
+    .title, .heading, .figure, .wordmark { word-spacing: -0.3em; }
     .input:disabled, .input[readonly] { background: var(--color-field); opacity: .75; }
     /* Compact controls for filter rows: they refine a list, they are not the page. */
     .input-sm { width: auto; min-height: 32px; padding: 4px 28px 4px 12px; font-size: 13px; border-radius: 9999px; }

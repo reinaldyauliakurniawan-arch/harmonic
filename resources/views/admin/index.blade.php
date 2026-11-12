@@ -2,7 +2,7 @@
     <x-page-header title="Organizations" description="Approve new organizations and manage their status. You can't open a tenant's data from here." />
     <x-link-once :links="session('link') ? [session('link_for') => session('link')] : []" :kind="str_contains((string) session('link'), 'reset-password') ? 'reset' : 'invite'" />
     <x-errors />
-    <div class="mb-6 flex flex-wrap gap-1 border-b border-line" role="tablist">
+    <div class="mb-6 inline-flex gap-1" role="tablist">
         @foreach (['' => 'All', 'pending' => 'Pending', 'active' => 'Active', 'suspended' => 'Suspended', 'deleted' => 'Deleted'] as $k => $l)
             <a href="{{ route('admin.index', $k ? ['status' => $k] : []) }}" class="tab" @if ((string) $status === $k) aria-current="page" @endif>{{ $l }}</a>
         @endforeach

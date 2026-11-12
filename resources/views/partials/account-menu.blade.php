@@ -1,5 +1,5 @@
 <details class="relative">
-    <summary class="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-[4px] px-2 hover:bg-hover" aria-label="Account menu">
+    <summary class="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-[8px] px-2 hover:bg-hover" aria-label="Account menu">
         <x-avatar :member="$me" />
         <span class="rail-hide hidden min-w-0 flex-1 truncate text-small md:inline">{{ auth()->user()->name }}</span>
         <x-icon name="chevron-down" :size="14" class="rail-hide hidden text-ink-muted md:inline" />

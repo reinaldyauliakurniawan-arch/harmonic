@@ -19,7 +19,7 @@
                 <div class="flex min-h-24 flex-col gap-2" data-dropzone>
                     @foreach ($cards as $t)
                         @php $steps = $t->steps->count(); $doneSteps = $t->steps->whereNotNull('done_at')->count(); $overdue = $t->isOpen() && $t->due_date->lt($today); @endphp
-                        <article class="rounded-[4px] border border-line bg-surface p-3" @can('status', $t) draggable="true" data-task="{{ $t->id }}" @dragstart="start" @dragend="end" @else data-task="{{ $t->id }}" @endcan>
+                        <article class="rounded-[10px] bg-surface p-3 shadow-[var(--shadow-group)]" @can('status', $t) draggable="true" data-task="{{ $t->id }}" @dragstart="start" @dragend="end" @else data-task="{{ $t->id }}" @endcan>
                             <a href="{{ route('org.tasks.show', $t) }}" class="block font-medium hover:underline">{{ $t->title }}</a>
                             <div class="mt-2 flex flex-wrap items-center gap-3 text-small text-ink-secondary">
                                 <x-avatar :member="$t->responsible" />

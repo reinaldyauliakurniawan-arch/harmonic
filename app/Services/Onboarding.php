@@ -16,6 +16,14 @@ class Onboarding
 {
     public const RUBRIC = [1 => 'Not yet', 2 => 'Developing', 3 => 'Solid', 4 => 'Strong', 5 => 'Role model'];
 
+    public const RUBRIC_TEXT = [
+        1 => 'Rarely shows this yet; needs clear examples and close support.',
+        2 => 'Shows it sometimes, mostly when reminded or when the stakes are low.',
+        3 => 'Shows it reliably in day-to-day work without being asked.',
+        4 => 'Shows it even under pressure, and others notice the difference it makes.',
+        5 => 'Shows it every time and helps others do the same; people point to them as the example.',
+    ];
+
     public function __construct(private Tenant $tenant) {}
 
     /** New organization with its root seat and seeded rubric levels, run inside the org's tenant context. */
@@ -47,7 +55,7 @@ class Onboarding
             $root->is_leadership_team = true;
             $root->save();
             foreach (self::RUBRIC as $score => $label) {
-                RubricLevel::create(['score' => $score, 'label' => $label]);
+                RubricLevel::create(['score' => $score, 'label' => $label, 'description' => self::RUBRIC_TEXT[$score]]);
             }
             self::seedLeadership($org->id);
             if ($membership) {

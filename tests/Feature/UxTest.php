@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\RubricLevel;
+use App\Services\Onboarding;
+
 beforeEach(fn () => $this->travelTo('2026-11-14 03:00:00'));
 
 test('missions timeline places milestones, tasks and today inside the quarter', function () {
@@ -54,4 +57,9 @@ test('home says how soon the next meeting is', function () {
     $t = orgTree();
     mkEvent($t['admin'], 'team', ['type' => 'weekly_meeting', 'team_seat_id' => $t['root']->id, 'starts_at' => now()->addDay(), 'ends_at' => now()->addDay()->addHour()]);
     actAs($t['admin'])->get(ou('home'))->assertSee('Tomorrow');
+});
+
+test('new organizations get a description for every rubric level', function () {
+    makeOrg();
+    expect(RubricLevel::orderBy('score')->pluck('description')->all())->toBe(array_values(Onboarding::RUBRIC_TEXT));
 });

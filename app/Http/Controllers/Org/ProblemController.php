@@ -27,7 +27,7 @@ class ProblemController extends Controller
         $q = $request->validate(['team' => 'nullable|integer', 'tab' => 'nullable|in:short,long,solved,dropped']);
         $f = $access->formation();
         $teams = $f->teamOptions();
-        $team = isset($q['team'], $teams[$q['team']]) ? (int) $q['team'] : ($f->teamIdsOf($access->id())[0] ?? array_key_first($teams));
+        $team = (int) $this->pickTeam($q['team'] ?? null, $teams, $f->teamIdsOf($access->id())[0] ?? array_key_first($teams));
         $tab = $q['tab'] ?? 'short';
         $problems = Problem::with('owner.user')->where('team_seat_id', $team)
             ->when(in_array($tab, ['short', 'long'], true), fn ($w) => $w->whereIn('status', ['open', 'solving'])->where('horizon', $tab)->orderByRaw('`rank` is null')->orderBy('rank')->orderBy('created_at'),
@@ -42,7 +42,7 @@ class ProblemController extends Controller
     {
         $this->authorize('create', Problem::class);
         $f = $access->formation();
-        $team = (int) ($request->query('team') ?: ($f->teamIdsOf($access->id())[0] ?? array_key_first($f->teamOptions())));
+        $team = (int) ($request->query('team') ?: $this->pickTeam(null, $f->teamOptions(), $f->teamIdsOf($access->id())[0] ?? array_key_first($f->teamOptions())));
 
         return view('problems.form', ['teams' => $f->teamOptions(), 'team' => $team, 'members' => app(Problems::class)->teamOwnerOptions($team),
             'preset' => $request->only(['title', 'source_type', 'source_id', 'horizon', 'description', 'back'])]);

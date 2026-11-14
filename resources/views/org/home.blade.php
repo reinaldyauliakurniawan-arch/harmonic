@@ -22,7 +22,9 @@
     <div class="min-w-0">
     @if ($checklist)
         <section class="card mb-6">
-            <h2 class="heading">Set up your organization</h2>
+            @php $setupDone = collect($checklist)->filter(fn ($i) => $i[1])->count(); @endphp
+            <h2 class="heading flex items-center justify-between gap-3">Set up your organization <span class="text-small font-normal text-ink-secondary">{{ $setupDone }} of {{ count($checklist) }} done</span></h2>
+            <div class="flush h-1 bg-hover" role="progressbar" aria-label="Setup progress" aria-valuemin="0" aria-valuemax="{{ count($checklist) }}" aria-valuenow="{{ $setupDone }}"><svg class="block h-1 w-full" aria-hidden="true"><rect class="fill-ink" x="0" y="0" height="4" width="{{ round($setupDone / count($checklist) * 100) }}%" /></svg></div>
             <ol class="rows">
                 @foreach ($checklist as [$label, $done, $route])
                     <li class="flex min-h-12 items-center gap-3">

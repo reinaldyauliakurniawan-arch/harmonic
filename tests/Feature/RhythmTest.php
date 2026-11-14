@@ -244,7 +244,7 @@ test('phase 2 pages render', function () {
     $mi = mkMission($t['rep'], $t['sales']->id);
     actAs($t['rep'])->postJson(ou('metrics.value', [$m]), ['week_start' => '2026-11-02', 'value' => '41']);
     foreach ([['metrics.index'], ['metrics.index', ['trailing' => 1]], ['metrics.show', [$m]], ['problems.index'], ['problems.show', [$p]], ['problems.create'],
-        ['solve.index'], ['missions.index'], ['missions.index', ['view' => 'cascade']], ['missions.show', [$mi]], ['missions.create'], ['teams.index'],
+        ['solve.index'], ['missions.index'], ['missions.index', ['view' => 'cascade']], ['missions.index', ['view' => 'timeline']], ['missions.show', [$mi]], ['missions.create'], ['teams.index'],
         ['teams.show', [$t['sales']]], ['meetings.index'], ['numbers.index']] as $r) {
         actAs($t['rep'])->get(ou($r[0], $r[1] ?? []))->assertOk();
     }

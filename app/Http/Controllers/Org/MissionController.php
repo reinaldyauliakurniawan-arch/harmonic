@@ -12,6 +12,7 @@ use App\Services\Calendar;
 use App\Services\Tasks;
 use App\Services\Tenant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -22,7 +23,7 @@ class MissionController extends Controller
     {
         $this->authorize('view', $tenant->organization);
         $cal = Calendar::for($tenant->organization);
-        $q = $request->validate(['qi' => 'nullable|integer|between:-200,200', 'level' => 'nullable|in:company,team,personal', 'team' => 'nullable|integer', 'owner' => 'nullable|integer', 'view' => 'nullable|in:list,cascade']);
+        $q = $request->validate(['qi' => 'nullable|integer|between:-200,200', 'level' => 'nullable|in:company,team,personal', 'team' => 'nullable|integer', 'owner' => 'nullable|integer', 'view' => 'nullable|in:list,cascade,timeline']);
         $current = $cal->quarterIndex($cal->today());
         $qi = $q['qi'] ?? $current;
         $qs = $cal->quarterStart($qi)->toDateString();
@@ -32,10 +33,55 @@ class MissionController extends Controller
             ->when($q['owner'] ?? null, fn ($w, $o) => $w->where('owner_id', $o))
             ->orderByRaw("field(level, 'company', 'team', 'personal')")->orderBy('id')->get();
 
+        $view = $q['view'] ?? 'list';
+
         return view('missions.index', [
-            'missions' => $missions, 'q' => $q, 'qi' => $qi, 'current' => $current, 'cal' => $cal, 'view' => $q['view'] ?? 'list',
+            'missions' => $missions, 'q' => $q, 'qi' => $qi, 'current' => $current, 'cal' => $cal, 'view' => $view,
+            'timeline' => $view === 'timeline' ? $this->timeline($missions, $cal, $qs) : null,
             'teams' => $access->formation()->teamOptions(), 'members' => Tasks::memberOptions(),
         ]);
+    }
+
+    /**
+     * Gantt rows for one quarter: each Mission spans the quarter, milestones sit on their due dates,
+     * and linked tasks run from the day they were created to their due date. Positions are percent of the quarter.
+     */
+    private function timeline($missions, Calendar $cal, string $qs): array
+    {
+        $start = Carbon::parse($qs);
+        $pct = fn (string $date) => round(max(0, min(100, $start->diffInDays(Carbon::parse($date), false) / 91 * 100)), 2);
+        $today = $cal->today()->toDateString();
+        $milestoneIds = $missions->flatMap->milestones->pluck('mission_id', 'id');
+        $tasks = Task::with('responsible.user')
+            ->where(fn ($w) => $w->where('source_type', 'mission')->whereIn('source_id', $missions->pluck('id')->all() ?: [0])
+                ->orWhere(fn ($w) => $w->where('source_type', 'milestone')->whereIn('source_id', $milestoneIds->keys()->all() ?: [0])))
+            ->where('status', '!=', 'cancelled')->orderBy('due_date')->get()
+            ->groupBy(fn ($t) => $t->source_type === 'mission' ? $t->source_id : $milestoneIds[$t->source_id]);
+
+        $byParent = $missions->groupBy(fn ($m) => $missions->contains('id', $m->parent_id) ? $m->parent_id : 0);
+        $rows = [];
+        $walk = function ($parent, $depth) use (&$walk, &$rows, $byParent, $pct, $today, $tasks, $cal) {
+            foreach ($byParent[$parent] ?? [] as $m) {
+                $count = $m->milestones->count();
+                $rows[] = [
+                    'm' => $m, 'depth' => $depth,
+                    'progress' => $count ? round($m->milestones->whereNotNull('done_at')->count() / $count * 100) : null,
+                    'milestones' => $m->milestones->map(fn ($ms) => ['ms' => $ms, 'at' => $ms->due_date ? $pct($ms->due_date->copy()->addHours(12)->toDateTimeString()) : null,
+                        'late' => ! $ms->done_at && $ms->due_date && $ms->due_date->toDateString() < $today])->all(),
+                    'tasks' => ($tasks[$m->id] ?? collect())->map(function ($t) use ($pct, $today, $cal) {
+                        $from = $pct(min($cal->local($t->created_at)->toDateString(), $t->due_date->toDateString()));
+                        $to = $pct($t->due_date->copy()->addDay()->toDateString());
+
+                        return ['t' => $t, 'from' => $from, 'width' => max(round($to - $from, 2), 1.1), 'late' => $t->isOpen() && $t->due_date->toDateString() < $today];
+                    })->all(),
+                ];
+                $walk($m->id, $depth + 1);
+            }
+        };
+        $walk(0, 0);
+        $now = $start->diffInDays(Carbon::parse($today), false);
+
+        return ['rows' => $rows, 'today' => $now >= 0 && $now < 91 ? round(($now + 0.5) / 91 * 100, 2) : null];
     }
 
     public function create(Request $request, Access $access, Tenant $tenant)

@@ -343,6 +343,39 @@
     .nav-group:not([open]) > summary svg { transform: rotate(-90deg); }
     @media (pointer: coarse) { .nav-group > summary { min-height: 40px; } }
     .rail-show { display: none; }
+
+    /* One-click done: a 44 px target around an 18 px box. */
+    .task-check { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; margin-left: -12px; border-radius: 8px; }
+    .task-check > span { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: 1.5px solid var(--color-line-strong); border-radius: 9999px; color: var(--color-on-brass); transition: background-color 120ms ease-out, border-color 120ms ease-out; }
+    button.task-check:hover > span { border-color: var(--color-ink); }
+    .task-check[aria-pressed="true"] > span, .task-check.is-static > span:has(svg) { background: var(--color-on-track); border-color: var(--color-on-track); }
+    .task-check.is-static > span { border-style: dashed; }
+
+    /* Missions timeline: a sticky name column and a 13-week track that scrolls sideways on phones. */
+    .gantt { overflow-x: auto; }
+    .gantt-row { display: grid; grid-template-columns: 240px minmax(560px, 1fr); align-items: stretch; border-bottom: 1px solid var(--color-line); list-style: none; }
+    @media (max-width: 639px) { .gantt-row { grid-template-columns: 160px minmax(520px, 1fr); } }
+    .gantt-group:last-child > :last-child { border-bottom: 0; }
+    .gantt-label { position: sticky; left: 0; z-index: 1; display: flex; flex-direction: column; justify-content: center; gap: 2px; min-width: 0; min-height: 44px; padding-top: 6px; padding-bottom: 6px; padding-right: 12px; background: var(--color-surface); border-right: 1px solid var(--color-line); }
+    .gantt-head .gantt-label { padding-left: 12px; }
+    .gantt-weeks { display: grid; grid-template-columns: repeat(13, 1fr); align-items: center; font-size: 12px; color: var(--color-ink-secondary); text-align: center; }
+    .gantt-weeks .is-now { color: var(--color-ink); font-weight: 600; }
+    .gantt-track { display: block; width: 100%; height: 44px; align-self: center; background-image: linear-gradient(to right, var(--color-line) 1px, transparent 1px); background-size: calc(100% / 13) 100%; }
+    summary.gantt-row { cursor: pointer; }
+    summary.gantt-row:hover .gantt-label, summary.gantt-row:hover { background-color: var(--color-hover); }
+    .gantt-caret { display: inline-flex; color: var(--color-ink-muted); transition: transform 120ms ease-out; }
+    .gantt-group[open] .gantt-caret { transform: rotate(90deg); }
+    .gantt-today { stroke: var(--color-ink); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .gantt-bar { fill: var(--color-brass-subtle); stroke: var(--color-bar); }
+    .gantt-bar.is-on_track { fill: var(--color-on-track-subtle); stroke: none; }
+    .gantt-bar.is-off_track { fill: var(--color-off-track-subtle); stroke: none; }
+    .gantt-fill { fill: var(--color-ink); opacity: .22; }
+    .gantt-diamond { fill: var(--color-surface); stroke: var(--color-ink); stroke-width: 1.5; }
+    .gantt-diamond.is-done { fill: var(--color-ink); }
+    .gantt-diamond.is-late { stroke: var(--color-off-track); fill: var(--color-off-track-subtle); }
+    .gantt-task { fill: var(--color-line-strong); }
+    .gantt-task.is-done { fill: var(--color-on-track); }
+    .gantt-task.is-late { fill: var(--color-off-track); }
 }
 
 /* Collapsed sidebar: a 64 px rail of icons. Unlayered so it can outrank the layout utilities on the same elements. */

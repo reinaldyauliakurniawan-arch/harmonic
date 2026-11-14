@@ -30,7 +30,7 @@ class MeetingController extends Controller
         $this->authorize('view', $tenant->organization);
         $f = $access->formation();
         $teams = $f->teamOptions();
-        $team = (int) ($request->query('team') && isset($teams[$request->query('team')]) ? $request->query('team') : ($f->teamIdsOf($access->id())[0] ?? array_key_first($teams)));
+        $team = (int) $this->pickTeam($request->query('team'), $teams, $f->teamIdsOf($access->id())[0] ?? array_key_first($teams));
         $cal = Calendar::for($tenant->organization);
         $meetings = Meeting::where('team_seat_id', $team)->whereNotNull('started_at')->latest('scheduled_for')->paginate(25)->withQueryString();
         $ids = $meetings->pluck('id');

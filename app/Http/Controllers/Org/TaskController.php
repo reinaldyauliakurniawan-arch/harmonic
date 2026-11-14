@@ -26,7 +26,7 @@ class TaskController extends Controller
         ]);
         $tab = $q['tab'] ?? 'mine';
         $me = $access->id();
-        $team = $q['team'] ?? ($tab === 'team' ? ($f->teamIdsOf($me)[0] ?? null) : null);
+        $team = $tab === 'team' ? $this->pickTeam($q['team'] ?? null, $f->teamOptions(), $f->teamIdsOf($me)[0] ?? null) : ($q['team'] ?? null);
         $week = $cal->currentWeekStart();
         $today = $cal->today()->toDateString();
 

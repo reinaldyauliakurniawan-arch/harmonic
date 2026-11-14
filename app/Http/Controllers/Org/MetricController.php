@@ -21,7 +21,7 @@ class MetricController extends Controller
         $q = $request->validate(['team' => 'nullable|integer', 'qi' => 'nullable|integer|between:-200,200', 'trailing' => 'nullable|boolean', 'archived' => 'nullable|boolean']);
         $f = $access->formation();
         $teams = $f->teamOptions();
-        $team = isset($q['team'], $teams[$q['team']]) ? (int) $q['team'] : ($f->teamIdsOf($access->id())[0] ?? array_key_first($teams));
+        $team = (int) $this->pickTeam($q['team'] ?? null, $teams, $f->teamIdsOf($access->id())[0] ?? array_key_first($teams));
         $cal = $metrics->cal();
         $currentQi = $cal->quarterIndex($cal->today());
         $qi = $q['qi'] ?? $currentQi;

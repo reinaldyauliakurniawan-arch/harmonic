@@ -68,7 +68,12 @@
         <div class="rows">
             @foreach ($meetings as $mt)
                 <div class="flex flex-wrap items-center justify-between gap-3 py-2">
-                    <span class="flex flex-wrap gap-x-3"><span>{{ $mt['team'] }}</span><span class="text-ink-secondary">{{ \App\Services\Calendar::formatDate($cal->local($mt['event']->starts_at)) }}, {{ $cal->local($mt['event']->starts_at)->format('H:i') }}</span></span>
+                    @php
+                        $at = $cal->local($mt['event']->starts_at);
+                        $in = (int) $today->diffInDays($at->startOfDay(), false);
+                        $when = $mt['live'] ? 'Live now' : ($in <= 0 ? 'Today' : ($in === 1 ? 'Tomorrow' : 'In '.$in.' days'));
+                    @endphp
+                    <span class="flex min-w-0 flex-col"><span>{{ $mt['team'] }}</span><span class="text-small text-ink-secondary"><span class="{{ $in <= 0 ? 'font-medium text-ink' : '' }}">{{ $when }}</span>, {{ $at->format('D, j M') }} at {{ $at->format('H:i') }}</span></span>
                     <a class="btn btn-sm {{ $mt['live'] ? 'btn-primary' : '' }}" href="{{ route('org.meetings.run', $mt['event']) }}">{{ $mt['live'] ? 'Join' : 'Open' }}</a>
                 </div>
             @endforeach

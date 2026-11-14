@@ -1,5 +1,8 @@
 @php
     $base = array_filter(['level' => $q['level'] ?? null, 'team' => $q['team'] ?? null, 'owner' => $q['owner'] ?? null, 'view' => $view]);
+    $qStart = $cal->quarterStart($qi);
+    $tally = collect(['on_track' => 'on track', 'off_track' => 'off track', 'done' => 'done', 'not_done' => 'not done'])
+        ->map(fn ($l, $k) => [$missions->where('status', $k)->count(), $l])->filter(fn ($x) => $x[0]);
     $countFor = fn ($list) => $list->count();
     $render = fn ($m, $indent = 0) => view('missions.row', ['m' => $m, 'cal' => $cal, 'indent' => $indent, 'teams' => $teams])->render();
 @endphp
@@ -7,23 +10,36 @@
     <x-page-header title="Missions" description="Three to seven 90-day priorities per team and person, each with a clear definition of done.">
         <x-slot:actions><a href="{{ route('org.missions.create') }}" class="btn btn-primary">New Mission</a></x-slot:actions>
     </x-page-header>
-    <div class="mb-4 flex items-center gap-2">
+    <div class="mb-4 flex flex-wrap items-center gap-2">
         <a class="btn btn-sm" href="{{ route('org.missions.index', $base + ['qi' => $qi - 1]) }}" aria-label="Previous quarter"><x-icon name="chevron-left" /></a>
-        <span class="heading">{{ $cal->quarterLabel($cal->quarterStart($qi)) }}</span>
+        <span class="heading">{{ $cal->quarterLabel($qStart) }}</span>
         <a class="btn btn-sm" href="{{ route('org.missions.index', $base + ['qi' => $qi + 1]) }}" aria-label="Next quarter"><x-icon name="chevron-right" /></a>
+        <span class="text-small text-ink-secondary">{{ $qStart->format('j M') }} to {{ $cal->quarterEnd($qi)->format('j M Y') }}@if ($qi !== $current), <a class="link" href="{{ route('org.missions.index', $base) }}">back to this quarter</a>@endif</span>
+    </div>
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+            @foreach (['list' => 'List', 'cascade' => 'Cascade', 'timeline' => 'Timeline'] as $k => $l)
+                <a href="{{ route('org.missions.index', ['view' => $k, 'qi' => $qi] + $base) }}" class="tab" @if ($view === $k) aria-current="page" @endif>{{ $l }}</a>
+            @endforeach
+        </div>
+        @if ($tally->isNotEmpty())
+            <p class="text-small text-ink-secondary">{{ $missions->count() }} {{ \Illuminate\Support\Str::plural('Mission', $missions->count()) }}: {{ $tally->map(fn ($x) => $x[0].' '.$x[1])->join(', ') }}</p>
+        @endif
     </div>
     <form method="GET" class="filters mb-6 border-b border-line pb-4" x-data="autoSubmit" @change="submit">
         <input type="hidden" name="qi" value="{{ $qi }}">
         <x-filter name="level" label="Level" :options="['' => 'All', 'company' => 'Company', 'team' => 'Team', 'personal' => 'Personal']" :value="$q['level'] ?? ''" />
         <x-filter name="team" label="Team" :options="['' => 'Any'] + $teams" :value="$q['team'] ?? ''" />
         <x-filter name="owner" label="Owner" :options="['' => 'Anyone'] + $members" :value="$q['owner'] ?? ''" />
-        <x-filter name="view" label="View" :options="['list' => 'List', 'cascade' => 'Cascade']" :value="$view" />
+        <input type="hidden" name="view" value="{{ $view }}">
         <button class="btn btn-sm btn-ghost" data-apply>Apply</button>
     </form>
     @if ($missions->isEmpty())
         <x-empty heading="No Missions this quarter" text="Set three to seven priorities for the quarter, each with a clear definition of done.">
             <a href="{{ route('org.missions.create') }}" class="btn btn-primary">Set a Mission</a>
         </x-empty>
+    @elseif ($view === 'timeline')
+        @include('missions.timeline')
     @elseif ($view === 'cascade')
         @php
             $byParent = $missions->groupBy('parent_id');

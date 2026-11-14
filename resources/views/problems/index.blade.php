@@ -16,7 +16,13 @@
             @endforeach
         </div>
         @if ($problems->isEmpty())
-            <x-empty heading="Start your Problem Queue" :text="in_array($tab, ['short', 'long']) ? 'Raise anything that gets in the way. The team ranks the top three and solves them.' : 'Nothing here yet.'" />
+            @if (in_array($tab, ['short', 'long'], true))
+                <x-empty :heading="$tab === 'short' ? 'No short-term problems' : 'No long-term problems'" :text="$tab === 'short' ? 'Raise anything that gets in the way this week. The team ranks the top three and solves them in the Weekly Meeting.' : 'Bigger issues that need a quarterly session go here.'">
+                    <a href="{{ route('org.problems.create', ['team' => $team, 'horizon' => $tab]) }}" class="btn btn-primary">Raise a problem</a>
+                </x-empty>
+            @else
+                <x-empty :heading="$tab === 'solved' ? 'Nothing solved yet' : 'Nothing dropped'" :text="$tab === 'solved' ? 'Problems this team solves with I-S.O.L.V.E land here, with their evaluation.' : 'Problems dropped as not worth solving, or as duplicates, land here with the reason.'" />
+            @endif
         @else
             <div class="rows">
                 @foreach ($problems as $p)

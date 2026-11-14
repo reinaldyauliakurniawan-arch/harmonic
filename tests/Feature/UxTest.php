@@ -63,3 +63,14 @@ test('new organizations get a description for every rubric level', function () {
     makeOrg();
     expect(RubricLevel::orderBy('score')->pluck('description')->all())->toBe(array_values(Onboarding::RUBRIC_TEXT));
 });
+
+test('empty states tell an empty space apart from filters that hide everything', function () {
+    $t = orgTree();
+    mkMission($t['rep'], $t['sales']->id);
+    actAs($t['rep'])->get(ou('missions.index', ['level' => 'company']))->assertSee('No Missions match these filters')->assertSee('Clear filters');
+    actAs($t['rep'])->get(ou('tasks.index'))->assertSee('Nothing on your plate');
+    actAs($t['rep'])->get(ou('tasks.index', ['due' => 'overdue']))->assertSee('No tasks match these filters');
+    actAs($t['rep'])->get(ou('problems.index', ['team' => $t['sales']->id, 'tab' => 'long']))->assertSee('No long-term problems')->assertSee('horizon=long', false);
+    actAs($t['rep'])->get(ou('problems.index', ['team' => $t['sales']->id, 'tab' => 'solved']))->assertSee('Nothing solved yet')->assertDontSee('Raise anything');
+    actAs($t['rep'])->get(ou('boards.index', ['archived' => 1]))->assertSee('No archived boards');
+});

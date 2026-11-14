@@ -19,7 +19,7 @@
             @endif
         @endforeach
     @else
-        <x-empty heading="You're not part of an organization yet." text="Ask an admin for an invitation link, or create your own organization.">
+        <x-empty heading="You're not part of an organization yet" text="Ask an admin for an invitation link, or create your own organization.">
             <form method="POST" action="{{ route('logout') }}">@csrf<button class="btn btn-primary">Sign out to create one</button></form>
         </x-empty>
     @endif

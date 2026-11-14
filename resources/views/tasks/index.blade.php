@@ -4,7 +4,11 @@
     </x-page-header>
     <x-errors />
 
-    <details class="mb-8" @if ($errors->any()) open @endif>
+    @php
+        $filtered = array_filter(\Illuminate\Support\Arr::only($q, ['due', 'person', 'source'])) || ! in_array($q['status'] ?? 'open', ['open', ''], true);
+        $firstTask = $tasks->isEmpty() && $tab === 'mine' && ! $filtered;
+    @endphp
+    <details class="mb-8" @if ($errors->any() || $firstTask) open @endif>
         <summary class="btn btn-primary list-none"><x-icon name="plus" />Add a task</summary>
         <div class="panel mt-3 p-4"><x-quick-task :team="$tab === 'team' ? $team : null" heading="New task" /></div>
     </details>
@@ -27,7 +31,15 @@
     </form>
 
     @if ($tasks->isEmpty())
-        <x-empty :heading="$tab === 'mine' ? 'Nothing on your plate' : 'No tasks match'" :text="$tab === 'mine' ? 'Tasks where you are Responsible or Accountable show up here. Add one above, or pick some up in the next Weekly Meeting.' : 'Change the filters above to see more.'" />
+        @if ($filtered)
+            <x-empty heading="No tasks match these filters" text="Clear the filters to see every open task here.">
+                <a href="{{ route('org.tasks.index', array_filter(['tab' => $tab, 'team' => $tab === 'mine' ? null : $team])) }}" class="btn">Clear filters</a>
+            </x-empty>
+        @elseif ($tab === 'mine')
+            <x-empty heading="Nothing on your plate" text="Tasks where you are Responsible or Accountable show up here. Add one with the form above, or pick some up in the next Weekly Meeting." />
+        @else
+            <x-empty :heading="$tab === 'team' ? 'No open tasks for this team' : 'No open tasks yet'" text="Tasks from meetings, problems, Missions, and events land here too." />
+        @endif
     @else
         <div class="rows">@foreach ($tasks as $t)<x-task-row :task="$t" :today="$today" />@endforeach</div>
         {{ $tasks->links() }}

@@ -34,7 +34,11 @@
         <input type="hidden" name="view" value="{{ $view }}">
         <button class="btn btn-sm btn-ghost" data-apply>Apply</button>
     </form>
-    @if ($missions->isEmpty())
+    @if ($missions->isEmpty() && array_filter(\Illuminate\Support\Arr::only($q, ['level', 'team', 'owner'])))
+        <x-empty heading="No Missions match these filters" text="Other Missions this quarter are hidden by the level, team, or owner you picked.">
+            <a href="{{ route('org.missions.index', ['qi' => $qi, 'view' => $view]) }}" class="btn">Clear filters</a>
+        </x-empty>
+    @elseif ($missions->isEmpty())
         <x-empty heading="No Missions this quarter" text="Set three to seven priorities for the quarter, each with a clear definition of done.">
             <a href="{{ route('org.missions.create') }}" class="btn btn-primary">Set a Mission</a>
         </x-empty>

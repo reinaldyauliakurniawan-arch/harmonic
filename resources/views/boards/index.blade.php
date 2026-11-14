@@ -12,7 +12,11 @@
         <a class="tab" href="{{ route('org.boards.index', ['archived' => 1]) }}" @if ($archived) aria-current="page" @endif>Archived</a>
     </div>
     @if ($boards->isEmpty())
-        <x-empty heading="Start a board" text="Create a board for a project or a team. It starts with To do, Doing, and Done." />
+        @if ($archived)
+            <x-empty heading="No archived boards" text="Archived boards are hidden from the board picker; their tasks stay in the task lists." />
+        @else
+            <x-empty heading="Start a board" text="Name a board in the form above for a project or a team. It starts with To do, Doing, and Done." />
+        @endif
     @else
         <div class="rows">
             @foreach ($boards as $b)

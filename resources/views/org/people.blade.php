@@ -51,7 +51,7 @@
             </div>
         </div>
         @if ($members->isEmpty())
-            <x-empty heading="No {{ $status }} members" />
+            <x-empty :heading="'No '.$status.' members'" :text="$status === 'departed' ? 'People you deactivate move here. Their past work keeps their name.' : 'Invite people above to add them.'" />
         @else
             <div class="relative overflow-x-auto"><table class="tbl">
                 <thead><tr><th>Name</th><th>Email</th><th>Seats</th><th>Joined</th><th><span class="sr-only">Actions</span></th></tr></thead>

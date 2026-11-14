@@ -1,7 +1,9 @@
 <x-app title="Fundamentals history">
     <x-page-header title="Fundamentals history" description="Every published version, read-only. Compare two to see what changed." />
     @if ($versions->isEmpty())
-        <x-empty heading="Nothing published yet" />
+        <x-empty heading="Nothing published yet" text="Each time leadership publishes the Fundamentals, that version is kept here, read-only.">
+            <a href="{{ route('org.fundamentals.show') }}" class="btn">Open the Fundamentals</a>
+        </x-empty>
     @else
         <form method="GET" class="mb-6 flex flex-wrap items-end gap-3">
             <x-field name="a" label="Compare" type="select" :options="$versions->pluck('version', 'version')->map(fn ($v) => 'Version '.$v)->all()" :value="$a?->version ?? $versions->skip(1)->first()?->version" />

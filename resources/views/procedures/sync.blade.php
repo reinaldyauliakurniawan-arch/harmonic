@@ -1,7 +1,9 @@
 <x-app title="Synchronization Cycle">
     <x-page-header title="Synchronization Cycle" description="Is every procedure acknowledged, audited, and reviewed on time?" />
     @if ($rows->isEmpty())
-        <x-empty heading="No procedures yet" text="Procedures appear here once a team documents them." />
+        <x-empty heading="No procedures yet" text="Procedures appear here once a team documents and publishes them.">
+            <a href="{{ route('org.procedures.index') }}" class="btn">Open Standardization</a>
+        </x-empty>
     @else
         <div class="relative overflow-x-auto"><table class="tbl">
             <thead><tr><th>Procedure</th><th>Team</th><th class="num">Acknowledged</th><th>Last audit</th><th>Review due</th><th><a class="hover:underline" href="{{ route('org.sync.index', ['sort' => $sort === 'status' ? null : 'status']) }}">Status</a></th></tr></thead>
